@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>It from Bit · 代數結構中湧現的時空</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+<!-- background canvas -->
+<canvas id="bg-field"></canvas>
+
+<!-- progress bar -->
+<div id="progress"></div>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="hero-inner reveal">
+    <div class="eyebrow">Witten et al. · 2022–2025 · 量子重力 × 算符代數</div>
+    <h1>從 <span class="grad">一個觀測者的代數</span><br/>湧現出時間、空間、熱與質量</h1>
+    <p class="lede">
+      時空與幾何並非基本的。它們是<strong>局域觀測者的代數結構</strong>與<strong>資訊限制</strong>的宏觀投影。
+      這是 Edward Witten 與合作者近年在 von Neumann 代數與全像原理交會處的革命性綱領 ——
+      <span class="mono">It from Bit</span>。
+    </p>
+    <div class="hero-eq">
+      $$\text{觀測者的局域代數}\ (\textbf{It}) \;\xrightarrow{\;\text{資訊限制}\;(\textbf{Bit})\;}\; \{\,\text{時間},\ \text{空間},\ \text{熱},\ \text{能量},\ \text{質量}\,\}$$
+    </div>
+    <a class="scroll-cue" href="#start">向下展開推導 ↓</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== 一、起點 ===================== -->
+<section id="start" class="step">
+  <div class="step-num reveal">01</div>
+  <h2 class="reveal">資訊局域觀測限制 · Type III₁ 代數</h2>
+  <div class="grid-2">
+    <div class="reveal">
+      <p>傳統量子力學假設希爾伯特空間可張量分解，於是有部分跡與密度矩陣：</p>
+      <div class="eqbox">$$\mathcal{H}=\mathcal{H}_A\otimes\mathcal{H}_B,\qquad S=-\mathrm{Tr}(\rho_A\ln\rho_A)$$</div>
+      <p>但在相對論性 QFT 中，<strong>Reeh–Schlieder 定理</strong>告訴我們：真空在任何空間邊界上都帶有<strong>無限的紫外糾纏</strong>。局域觀測者觸及的，是一種沒有跡、沒有局域密度矩陣的 <span class="tag t3">Type III₁</span> von Neumann 代數。</p>
+    </div>
+    <aside class="card warn reveal">
+      <h3>Type III 的致命特性</h3>
+      <ul>
+        <li>❌ 沒有跡 (Trace)</li>
+        <li>❌ 沒有局域密度矩陣 $\rho_A$</li>
+        <li>⚠️ 單一時空區域的糾纏熵在數學上<strong>未定義</strong>（等同無限大）</li>
+      </ul>
+      <p class="fine">黑洞外、或 de Sitter static patch 中的觀測者，因視界遮蔽，只能存取 Type III 代數的可觀測量。</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== 過渡動畫 ===================== -->
+<section class="step transition-stage">
+  <div class="step-num reveal">02</div>
+  <h2 class="reveal">代數過渡 · 微擾重力打開「跡」的開關</h2>
+  <p class="reveal center-lede">當牛頓常數 $G_N>0$（全像中的 $1/N$ 微擾）被引入，重力對觀測者的哈密頓量進行<strong>幾何著裝 (Gravitational Dressing)</strong>。把重力約束（微分同胚不變性）強加到代數上，數學上等同一次<strong>模交叉積 (Crossed Product)</strong> —— Type III 因此「降級」為 Type II，跡與密度矩陣<strong>重新出現</strong>。</p>
+
+  <div class="flow reveal">
+    <div class="node n3">
+      <div class="ntype">Type III₁</div>
+      <div class="ndesc">無跡 · 無 $\rho$<br/>糾纏熵發散</div>
+    </div>
+    <div class="arrow">
+      <div class="arrow-line"><span class="pulse"></span></div>
+      <div class="arrow-label">⊗ Crossed Product<br/><span class="mono">+ G<sub>N</sub> / 1/N</span></div>
+    </div>
+    <div class="branch">
+      <div class="node n2">
+        <div class="ntype">Type II∞</div>
+        <div class="ndesc">黑洞外部<br/>跡重現 ✓</div>
+      </div>
+      <div class="node n2 alt">
+        <div class="ntype">Type II₁</div>
+        <div class="ndesc">de Sitter 時空<br/>跡重現 ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card hl reveal">
+    <h3>跡重現 → 廣義熵的具現化</h3>
+    <p>有了跡，就能定義正規化的代數糾纏熵。Witten 證明它正是黑洞的<strong>廣義熵</strong>：</p>
+    <div class="eqbox big">$$S_{\text{gen}}=\frac{\text{Area}}{4G_N}+S_{\text{out}}$$</div>
+    <p>宏觀的黑洞熱力學、霍金輻射、熱效應，本質上是觀測者引入重力後，原本被 Type III 遮蔽的龐大資訊，在過渡到 Type II 時所付出的<strong>代數代價</strong>。</p>
+  </div>
+</section>
+
+<!-- ===================== 三、湧現卡片 ===================== -->
+<section class="step">
+  <div class="step-num reveal">03</div>
+  <h2 class="reveal">四種湧現 + 質量 · 宏觀物理 = 代數資訊流</h2>
+
+  <div class="cards reveal">
+
+    <article class="emerge" data-k="time">
+      <div class="ehead"><span class="ico">⏳</span><h3>時間</h3></div>
+      <div class="esrc">模自同構流 · Modular Flow</div>
+      <p>Type III 代數本身沒有客觀時間。但給定局域狀態 $\omega$，<strong>Tomita–Takesaki 理論</strong>必然唯一確定一參數自同構群：</p>
+      <div class="eqbox">$$\sigma_t^{\omega}(A)=\Delta^{it}\,A\,\Delta^{-it}$$</div>
+      <p>參數 $t$ 在宏觀上正是觀測者的<strong>固有時間</strong>。時間的流逝，是代數為維持統計平衡而自激的演化流（Connes–Rovelli 熱時假說）。</p>
+    </article>
+
+    <article class="emerge" data-k="space">
+      <div class="ehead"><span class="ico">🌐</span><h3>空間</h3></div>
+      <div class="esrc">子代數包含 · 糾纏網絡</div>
+      <p>空間區域 $U$ ↔ 邊界算符子代數 $\mathcal{A}(U)$。遠近、大小、包含關係 ↔ 子代數的包含與對易：</p>
+      <div class="eqbox">$$A\subset B \;\Longleftrightarrow\; \mathcal{A}(A)\subset\mathcal{A}(B)$$</div>
+      <p><strong>糾纏楔重構</strong>：糾纏越強，宏觀距離越近；熵歸零，空間結構就斷裂。</p>
+    </article>
+
+    <article class="emerge" data-k="heat">
+      <div class="ehead"><span class="ico">🔥</span><h3>熱（熵）</h3></div>
+      <div class="esrc">Type III → Type II 的跡效應</div>
+      <p>引入微擾重力後代數過渡所重現的跡，使原本被視界遮蔽的資訊以熵的形式具現：</p>
+      <div class="eqbox">$$S_{\text{gen}}=\frac{\text{Area}}{4G_N}+S_{\text{out}}$$</div>
+      <p>霍金溫度、黑洞熱力學，皆為此代數代價的宏觀表象。</p>
+    </article>
+
+    <article class="emerge" data-k="energy">
+      <div class="ehead"><span class="ico">⚡</span><h3>能量</h3></div>
+      <div class="esrc">模哈密頓量擾動 · 幾何阻力</div>
+      <p>模哈密頓量 $K$ 是代數內在時間流的生成元（Rindler 中即 Boost 能量）。擾動糾纏態：</p>
+      <div class="eqbox">$$\Delta S=\Delta\langle K\rangle$$</div>
+      <p>在 AdS/CFT 中對應 <strong>Ryu–Takayanagi 極小曲面</strong>的面積變化 —— 宏觀幾何對抗糾纏擾動的「彈性」，就是能量。</p>
+    </article>
+
+    <article class="emerge wide" data-k="mass">
+      <div class="ehead"><span class="ico">🎯</span><h3>質量</h3></div>
+      <div class="esrc">能量聚集 · Nambu–Goto 弦振動的表象</div>
+      <p>質量是局域能量的凝聚（$E=mc^2$）。當能量在宏觀時空高度聚集形成時空缺陷，弦/膜的運動由 <strong>Nambu–Goto 作用量</strong>主導。在代數底層，這代表大量 Type II 自由度被「緊緻化／凝聚」在特定時空邊界（弦張力、原子質量），成為觀測者測得的靜止質量。</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== 總結表 ===================== -->
+<section class="step">
+  <div class="step-num reveal">04</div>
+  <h2 class="reveal">總覽 · 宏觀概念 ⇄ 代數源頭</h2>
+  <table class="summary reveal">
+    <thead>
+      <tr><th>宏觀物理概念</th><th>底層代數與量子資訊源頭</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="ico">⏳</span> 時間 $(t)$</td><td>Type III 代數內在的模自同構流（Modular Flow）</td></tr>
+      <tr><td><span class="ico">🌐</span> 空間（幾何）</td><td>子代數之間的包含對易關係與量子糾纏網絡</td></tr>
+      <tr><td><span class="ico">🔥</span> 熱（熵）</td><td>微擾重力下 Type III → Type II 所重現的代數跡（Trace）</td></tr>
+      <tr><td><span class="ico">⚡</span> 能量 $(E)$</td><td>擾動微觀糾纏時宏觀幾何產生的阻力（模哈密頓量擾動）</td></tr>
+      <tr><td><span class="ico">🎯</span> 質量 $(m)$</td><td>Type II 自由度在時空邊界的凝聚（Nambu–Goto 弦張力）</td></tr>
+    </tbody>
+  </table>
+  <p class="closing reveal">我們不需要先想像一個有時間、有空間、有質量的宇宙。只要從「一個觀測者能觀測到的局域代數（<span class="mono">It</span>）」出發，重力、時間、熱與質量，全都作為資訊（<span class="mono">Bit</span>）受限後的宏觀投影自動誕生。這，是終極大一統的曙光。</p>
+</section>
+
+<!-- ===================== 參考文獻 ===================== -->
+<section class="step refs">
+  <h2 class="reveal">參考文獻 · References</h2>
+  <ol class="reveal" id="reflist"></ol>
+</section>
+
+</main>
+
+<footer>
+  <p>視覺化 · Type III von Neumann Algebras &amp; Emergent Spacetime · 內容整理自 Witten et al. 2022–2025</p>
+</footer>
+
+<script src="assets/refs.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
