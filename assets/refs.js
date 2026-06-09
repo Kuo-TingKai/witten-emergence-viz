@@ -19,6 +19,12 @@ const REFS = [
   { i: 17, url: "https://arxiv.org/pdf/2308.03663", note: "arXiv 2308.03663" },
   { i: 18, url: "https://d-nb.info/1329705467/34", note: "DNB 1329705467" },
   { i: 19, url: "https://inspirehep.net/literature/2639381", note: "INSPIRE 2639381 — Entanglement wedge" },
+  // —— It from Qubit / 全像 QEC 階梯（section 04）——
+  { i: 20, url: "https://arxiv.org/abs/hep-th/0603001", note: "Ryu–Takayanagi — 原始 RT 公式" },
+  { i: 21, url: "https://arxiv.org/abs/1411.7041", note: "Almheiri–Dong–Harlow — Bulk locality & QEC" },
+  { i: 22, url: "https://arxiv.org/abs/1512.06431", note: "JLMS — relative entropy = bulk modular Hamiltonian" },
+  { i: 23, url: "https://arxiv.org/abs/1503.06237", note: "HaPPY — 全像五角形碼" },
+  { i: 24, url: "https://doi.org/10.1007/BF01217730", note: "Witten — QFT & the Jones Polynomial（Chern–Simons / TQFT）" },
 ];
 
 const ol = document.getElementById("reflist");

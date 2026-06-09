@@ -36,6 +36,16 @@
 - index.html 載入 details.js（在 app.js 前）。
 - 驗證：`node --check` 三支 JS 全過；5 個 data-k 與 DETAILS keys 一一對應；Pages status=built。
 
+### M4 — 全像 QEC 階梯（section 04，後加） ✅
+- 在 section 03（四種湧現卡）與原 04（總覽）之間插入新 `.step` 區段，原總覽重編號 04 → 05。
+- 定位為「同一件事的 QEC / TQFT 視角」：von Neumann 代數的糾纏楔重構，換成量子糾錯碼語言再走一遍並推到拓撲層；lede 回指〈空間〉卡避免與既有 RT/糾纏楔內容矛盾。
+- **嵌入式 mini-DAG**：用既有 `.flow/.node/.arrow` 畫「資訊側（銅）⇄ 幾何側（金）」三根橫桿階梯（RT / JLMS / TQFT），抽象度 度規 → 局域性 → 拓撲。
+- 3 張可點擊 `.emerge` 卡（`rt` / `jlms` / `tqft`），正面放「玩味問句」(`.puzzle`) + 公式片段，點擊 → modal 完整推導；沿用既有 card→modal 機制，零接線。
+- 2 張 `.todo` placeholder 卡（`happy` = HaPPY 五角形碼、`cs` = Chern–Simons × Weyl），無 DETAILS 故不可點，標「待擴充」。
+- `details.js` 加 `rt` / `jlms` / `tqft` 三筆 DETAILS（LaTeX 雙跳脫）。
+- `gs-theme.css` 加 `.qec-ladder` / `.n-info` / `.n-geo` / `.puzzle` / `.todo` 樣式 + 新 data-k accent bar 與圖示色 + `#modal-body ul/li`。
+- `refs.js` 續編 20–24：RT(hep-th/0603001)、ADH(1411.7041)、JLMS(1512.06431)、HaPPY(1503.06237)、Witten Jones/Chern–Simons(BF01217730)。
+
 ## Fallback 指引
 - Rollback 到某 milestone：`git log --oneline` 找 `Mn:` commit，`git reset --hard <hash>`。
 - 關鍵檔案：`index.html`（結構）、`assets/style.css`（基底樣式）、`assets/gs-theme.css`（M2 主題，覆蓋層）、`assets/app.js`（M3 互動）、`assets/refs.js`（文獻）。

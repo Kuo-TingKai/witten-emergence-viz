@@ -149,9 +149,79 @@
   </div>
 </section>
 
-<!-- ===================== 總結表 ===================== -->
+<!-- ===================== 全像 QEC 階梯 ===================== -->
 <section class="step">
   <div class="step-num reveal">04</div>
+  <h2 class="reveal">全像 QEC 階梯 · 邊界資訊編織內部幾何與拓撲</h2>
+  <p class="reveal center-lede">前面從 von Neumann 代數看到糾纏楔重構（見上節〈空間〉卡）。同一件事，換成<strong>量子糾錯碼（QEC）</strong>的語言再走一遍，並一路推到拓撲層。三根橫桿把<strong>「資訊側」</strong>（邊界 / CFT / QEC）與<strong>「幾何側」</strong>（內部 / Bulk / TQFT）焊死，抽象度逐級上升 —— <span class="mono">度規 → 局域性 → 拓撲</span>。最精妙處：幾何上的「面積」與「拓撲」，竟直接等於資訊論的「熵」與「代碼子空間」。</p>
+
+  <div class="qec-ladder reveal">
+    <!-- rung 1 · RT -->
+    <div class="flow">
+      <div class="node n-info"><div class="ntype">糾纏熵 $S(A)$</div><div class="ndesc">$-\mathrm{Tr}(\rho_A\ln\rho_A)$<br/>純資訊論</div></div>
+      <div class="arrow"><div class="arrow-line"><span class="pulse"></span></div><div class="arrow-label">RT 公式<br/><span class="mono">= Area / 4G_N</span></div></div>
+      <div class="node n-geo"><div class="ntype">極小曲面面積</div><div class="ndesc">$\mathrm{Area}(\gamma_A)$<br/>幾何 · 度規</div></div>
+    </div>
+    <!-- rung 2 · JLMS -->
+    <div class="flow">
+      <div class="node n-info"><div class="ntype">抗抹除碼</div><div class="ndesc">$P_{\text{code}}=VV^\dagger$<br/>code subspace</div></div>
+      <div class="arrow"><div class="arrow-line"><span class="pulse"></span></div><div class="arrow-label">JLMS / ADH<br/><span class="mono">糾纏楔</span></div></div>
+      <div class="node n-geo"><div class="ntype">子區域重構</div><div class="ndesc">Bulk 算子還原<br/>幾何 · 局域性</div></div>
+    </div>
+    <!-- rung 3 · TQFT -->
+    <div class="flow">
+      <div class="node n-info"><div class="ntype">邏輯算子</div><div class="ndesc">免疫局部噪聲<br/>logical operator</div></div>
+      <div class="arrow"><div class="arrow-line"><span class="pulse"></span></div><div class="arrow-label">TQFT 函子<br/><span class="mono">V: Bord→Vec</span></div></div>
+      <div class="node n-geo"><div class="ntype">拓撲不變量</div><div class="ndesc">Wilson loop<br/>幾何 · 拓撲</div></div>
+    </div>
+  </div>
+
+  <div class="cards reveal">
+
+    <article class="emerge" data-k="rt">
+      <div class="ehead"><span class="ico"><i data-lucide="spline"></i></span><h3>面積 = 糾纏</h3></div>
+      <div class="esrc">Ryu–Takayanagi · 幾何橋樑</div>
+      <p class="puzzle">時空的連續性，究竟是哪來的？</p>
+      <div class="eqbox">$$S(A)=\frac{\text{Area}(\gamma_A)}{4G_N}$$</div>
+      <p>邊界區域 $A$ 的馮紐曼糾纏熵，等於內部極小曲面 $\gamma_A$ 的幾何面積。糾纏歸零 → 面積歸零 → 時空直接斷開。連續性是被糾纏硬生生「拉」出來的。</p>
+    </article>
+
+    <article class="emerge" data-k="jlms">
+      <div class="ehead"><span class="ico"><i data-lucide="shield"></i></span><h3>重構 = 糾錯</h3></div>
+      <div class="esrc">JLMS / ADH · 子區域對偶</div>
+      <p class="puzzle">補集全毀，內部還能完整還原？</p>
+      <div class="eqbox">$$\hat H_{\text{mod}}^{\partial}=\frac{\hat{\text{Area}}(\gamma_A)}{4G_N}+\hat H_{\text{mod}}^{\text{bulk}}$$</div>
+      <p>落在糾纏楔內的 bulk 時空點，被「加密」在邊界區域 $A$。即使補集遭嚴重噪聲（抹除錯誤）破壞，仍能單憑 $A$ 的算子完整還原。Bulk = 抗抹除的 code subspace。</p>
+    </article>
+
+    <article class="emerge wide" data-k="tqft">
+      <div class="ehead"><span class="ico"><i data-lucide="infinity"></i></span><h3>拓撲 = 邏輯算子</h3></div>
+      <div class="esrc">TQFT · 低能極限 · Chern–Simons</div>
+      <p class="puzzle">算子怎麼拉扯、怎麼形變，測量值都不變 —— 為什麼？</p>
+      <div class="eqbox">$$\dim V(\Sigma)=Z(\Sigma\times S^1)$$</div>
+      <p>把 bulk 重力推進到低能極限，度規動力學被凍結，留下純拓撲項（Chern–Simons）。其上的 Wilson loop 是拓撲算子，形變不改測量值 —— 這恰恰是 QEC 邏輯算子的特徵：對局部噪聲完全免疫。<strong>TQFT 說「拓撲所以不變」，QEC 說「邏輯所以不錯」，兩句話透過函子 $V:\text{Bord}\to\text{Vec}$ 在數學上融合。</strong></p>
+    </article>
+
+    <article class="emerge todo" data-k="happy">
+      <div class="ehead"><span class="ico"><i data-lucide="hexagon"></i></span><h3>HaPPY 五角形碼</h3></div>
+      <div class="esrc">Pastawski–Yoshida–Harlow–Preskill</div>
+      <p>用離散的雙曲鋪磚張量網絡，看完美張量如何在格子上複製上述三式（RT / 糾纏楔重構 / 邏輯算子）。</p>
+      <span class="todo-tag">🔬 TOY MODEL · 待擴充</span>
+    </article>
+
+    <article class="emerge todo" data-k="cs">
+      <div class="ehead"><span class="ico"><i data-lucide="waves"></i></span><h3>Chern–Simons × Weyl</h3></div>
+      <div class="esrc">手徵流的拓撲保護</div>
+      <p>邊界的手徵流（Chiral Current）如何藉由 bulk 的拓撲作用量，得到反常下的不變性。</p>
+      <span class="todo-tag">🔬 TOY MODEL · 待擴充</span>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== 總結表 ===================== -->
+<section class="step">
+  <div class="step-num reveal">05</div>
   <h2 class="reveal">總覽 · 宏觀概念 ⇄ 代數源頭</h2>
   <table class="summary reveal">
     <thead>

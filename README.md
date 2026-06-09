@@ -27,6 +27,17 @@
    | 能量 | 模哈密頓量擾動 $\Delta S=\Delta\langle K\rangle$、RT 曲面面積變化的幾何阻力 |
    | 質量 | Type II 自由度在時空邊界凝聚（Nambu–Goto 弦張力） |
 
+4. **全像 QEC 階梯 — 邊界資訊編織內部幾何與拓撲**（"It from Qubit" 視角）
+   把上面的糾纏楔重構換成量子糾錯碼（QEC）語言再走一遍，並推到拓撲層。三根橫桿把「資訊側」與「幾何側」焊死，抽象度逐級上升：度規 → 局域性 → 拓撲。
+
+   | 橋接 | 資訊側 | 幾何側 | 公式 |
+   |---|---|---|---|
+   | RT | 糾纏熵 $S(A)$ | 極小曲面面積 | $S(A)=\dfrac{\text{Area}(\gamma_A)}{4G_N}$ |
+   | JLMS / ADH | 抗抹除 code subspace | 糾纏楔 / 子區域重構 | $V\phi_b P_{\text{code}}=O_A V P_{\text{code}}$ |
+   | TQFT | 邏輯算子（免疫噪聲） | 拓撲不變量（Wilson loop） | $\dim V(\Sigma)=Z(\Sigma\times S^1)$，$V:\text{Bord}\to\text{Vec}$ |
+
+   點 `rt` / `jlms` / `tqft` 卡可展開完整推導；底部 `HaPPY 五角形碼`、`Chern–Simons × Weyl` 為待擴充 toy model。
+
 ## 怎麼看
 
 純前端、零相依、零建置。直接開：
@@ -46,8 +57,8 @@ witten-emergence-viz/
 │   ├── style.css       # 基底版面：流程圖、卡片、reveal
 │   ├── gs-theme.css    # Genesis gold 主題覆蓋層 + modal 樣式
 │   ├── app.js          # scroll reveal、進度條、糾纏網絡背景動畫
-│   ├── details.js      # 卡片點擊 → 數學細節 modal（含推導內容）
-│   └── refs.js         # 19 篇參考文獻清單（對應原始留言索引）
+│   ├── details.js      # 卡片點擊 → 數學細節 modal（湧現 5 卡 + RT/JLMS/TQFT 3 卡）
+│   └── refs.js         # 24 篇參考文獻清單（對應原始留言索引）
 ├── docs/
 │   └── progress-safe-yolo-three.md  # 開發進度日誌
 └── README.md

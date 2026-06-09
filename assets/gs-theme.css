@@ -119,4 +119,42 @@ body{
 #modal-body h4{margin:1.6rem 0 .5rem;font-size:1rem;font-weight:600;color:var(--champagne)}
 #modal-body p{font-size:.95rem;margin:.6rem 0}
 #modal-body .eqbox{background:rgba(212,175,55,.05)}
+#modal-body ul{margin:.6rem 0;padding-left:1.2rem}
+#modal-body li{color:var(--muted);margin:.35rem 0;font-size:.95rem}
+#modal-body li strong{color:var(--ink)}
 @media(max-width:640px){#modal{padding:2rem 1.3rem 1.6rem}}
+
+/* ============================================================
+   全像 QEC 階梯區段（section 04）
+   資訊側（銅）⇄ 幾何側（金）雙欄階梯 + 新湧現卡
+   ============================================================ */
+.qec-ladder{margin:2.6rem 0 1.2rem}
+.qec-ladder .flow{margin:1.1rem 0;gap:1.2rem}
+.node.n-info{border-color:rgba(184,115,51,.45);box-shadow:0 0 24px rgba(184,115,51,.1)}
+.node.n-info .ntype{color:var(--copper)}
+.node.n-geo{border-color:rgba(212,175,55,.5);box-shadow:0 0 24px rgba(212,175,55,.12)}
+.node.n-geo .ntype{color:var(--gold)}
+
+/* 新卡片左側 accent bar */
+.emerge[data-k=rt]::before{background:var(--champagne)}
+.emerge[data-k=jlms]::before{background:var(--copper)}
+.emerge[data-k=tqft]::before{background:var(--gold)}
+.emerge[data-k=happy]::before{background:var(--bronze)}
+.emerge[data-k=cs]::before{background:var(--bronze)}
+/* 新卡片圖示色 */
+.emerge[data-k=rt] .ico{color:var(--champagne)}
+.emerge[data-k=jlms] .ico{color:var(--copper)}
+.emerge[data-k=tqft] .ico{color:var(--gold)}
+.emerge[data-k=happy] .ico{color:var(--bronze)}
+.emerge[data-k=cs] .ico{color:var(--bronze)}
+
+/* 玩味問句（卡片正面 Q） */
+.puzzle{color:var(--gold);font-weight:600;font-size:1rem!important;
+  border-left:3px solid rgba(212,175,55,.5);padding-left:.8rem;margin:.4rem 0 .8rem!important}
+
+/* placeholder（待擴充）卡 */
+.emerge.todo{opacity:.8;border-style:dashed}
+.emerge.todo:hover{transform:translateY(-2px)}
+.todo-tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.72rem;
+  color:var(--bronze);border:1px solid rgba(205,127,50,.4);border-radius:6px;
+  padding:.15em .55em;margin-top:.9rem;letter-spacing:.05em}
