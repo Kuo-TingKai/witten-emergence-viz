@@ -27,6 +27,15 @@
 - `app.js` 背景糾纏網絡改金/香檳色（連線 #d4af37、節點 #f0d98a）。
 - index.html 於 style.css 後注入 gs-theme.css（覆蓋順序正確）。
 
+### M3 — 互動數學細節 ✅
+- 新增 `assets/details.js`：5 張湧現卡片皆可點擊 / Enter 展開金色 modal。
+  - **heat** → 模交叉積完整推導（$\mathcal{A}\rtimes_\sigma\mathbb{R}$、Takesaki 對偶 → II∞、跡重現 → $S_{\text{gen}}$）。
+  - **energy** → Tomita–Takesaki → 霍金溫度（KMS、Bisognano–Wichmann boost、歐氏 $2\pi$ 正則性 → $T_H=\kappa/2\pi$）。
+  - time / space / mass 亦各有推導（模流唯一性、糾纏楔重構、Nambu–Goto）。
+- modal 樣式加在 `gs-theme.css`（金色、blur 遮罩、ESC / 點外關閉、開啟時 re-typeset MathJax）。
+- index.html 載入 details.js（在 app.js 前）。
+- 驗證：`node --check` 三支 JS 全過；5 個 data-k 與 DETAILS keys 一一對應；Pages status=built。
+
 ## Fallback 指引
 - Rollback 到某 milestone：`git log --oneline` 找 `Mn:` commit，`git reset --hard <hash>`。
 - 關鍵檔案：`index.html`（結構）、`assets/style.css`（基底樣式）、`assets/gs-theme.css`（M2 主題，覆蓋層）、`assets/app.js`（M3 互動）、`assets/refs.js`（文獻）。
