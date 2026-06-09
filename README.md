@@ -3,6 +3,10 @@
 > 將 Edward Witten 與合作者（2022–2025）在**量子重力 × 算符代數**領域的綱領，做成一頁互動式視覺化。
 > 核心命題：**時空、熱、能量、質量並非基本的，而是局域觀測者的 von Neumann 代數結構與資訊限制的宏觀投影。**
 
+**🔗 線上版（GitHub Pages）：<https://kuo-tingkai.github.io/witten-emergence-viz/>**
+
+採 Genesis gold 視覺主題（暖黑底 + gold / champagne / copper / bronze）。點擊任一張「湧現卡片」可展開該概念的數學推導 modal。
+
 ## 這份視覺化講什麼
 
 一條從「一個觀測者的局域代數」出發的推導鏈：
@@ -39,9 +43,13 @@ python3 -m http.server 8000      # 然後開 http://localhost:8000
 witten-emergence-viz/
 ├── index.html          # 主視覺化頁面（含 MathJax 公式）
 ├── assets/
-│   ├── style.css       # 深空暗色主題 + 過渡流程圖 + 卡片
+│   ├── style.css       # 基底版面：流程圖、卡片、reveal
+│   ├── gs-theme.css    # Genesis gold 主題覆蓋層 + modal 樣式
 │   ├── app.js          # scroll reveal、進度條、糾纏網絡背景動畫
+│   ├── details.js      # 卡片點擊 → 數學細節 modal（含推導內容）
 │   └── refs.js         # 19 篇參考文獻清單（對應原始留言索引）
+├── docs/
+│   └── progress-safe-yolo-three.md  # 開發進度日誌
 └── README.md
 ```
 
