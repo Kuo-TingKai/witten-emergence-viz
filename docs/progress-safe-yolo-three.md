@@ -12,7 +12,13 @@
 - **M3 — 互動數學細節**：每張湧現卡片可點擊展開 modal/抽屜，含模交叉積與 Tomita–Takesaki→霍金溫度的公式推導。預期產出：可互動深入頁。
 
 ## 進度日誌
-（每完成一個 milestone 追加）
+
+### M1 — 版控與上線 ✅
+- 加 `.gitignore`（OS/editor/log/node）。
+- 初始 commit `9fb5fd6`。
+- `gh repo create witten-emergence-viz --public --push` → https://github.com/Kuo-TingKai/witten-emergence-viz
+- 啟用 GitHub Pages（master / root）→ **線上 URL：https://kuo-tingkai.github.io/witten-emergence-viz/**（首次建置約 1–2 分鐘）。
+- 註：Genesis 主題來源在 Windows（`C:\Users\User\gs-trading-portal`），Linux 端無法存取 → M2 改依設計 token 重建。
 
 ## Fallback 指引
 - Rollback 到某 milestone：`git log --oneline` 找 `Mn:` commit，`git reset --hard <hash>`。
