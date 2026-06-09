@@ -57,9 +57,9 @@
     <aside class="card warn reveal">
       <h3>Type III 的致命特性</h3>
       <ul>
-        <li>❌ 沒有跡 (Trace)</li>
-        <li>❌ 沒有局域密度矩陣 $\rho_A$</li>
-        <li>⚠️ 單一時空區域的糾纏熵在數學上<strong>未定義</strong>（等同無限大）</li>
+        <li><i data-lucide="x" class="li-x"></i> 沒有跡 (Trace)</li>
+        <li><i data-lucide="x" class="li-x"></i> 沒有局域密度矩陣 $\rho_A$</li>
+        <li><i data-lucide="alert-triangle" class="li-warn"></i> 單一時空區域的糾纏熵在數學上<strong>未定義</strong>（等同無限大）</li>
       </ul>
       <p class="fine">黑洞外、或 de Sitter static patch 中的觀測者，因視界遮蔽，只能存取 Type III 代數的可觀測量。</p>
     </aside>
@@ -109,7 +109,7 @@
   <div class="cards reveal">
 
     <article class="emerge" data-k="time">
-      <div class="ehead"><span class="ico">⏳</span><h3>時間</h3></div>
+      <div class="ehead"><span class="ico"><i data-lucide="hourglass"></i></span><h3>時間</h3></div>
       <div class="esrc">模自同構流 · Modular Flow</div>
       <p>Type III 代數本身沒有客觀時間。但給定局域狀態 $\omega$，<strong>Tomita–Takesaki 理論</strong>必然唯一確定一參數自同構群：</p>
       <div class="eqbox">$$\sigma_t^{\omega}(A)=\Delta^{it}\,A\,\Delta^{-it}$$</div>
@@ -117,7 +117,7 @@
     </article>
 
     <article class="emerge" data-k="space">
-      <div class="ehead"><span class="ico">🌐</span><h3>空間</h3></div>
+      <div class="ehead"><span class="ico"><i data-lucide="globe"></i></span><h3>空間</h3></div>
       <div class="esrc">子代數包含 · 糾纏網絡</div>
       <p>空間區域 $U$ ↔ 邊界算符子代數 $\mathcal{A}(U)$。遠近、大小、包含關係 ↔ 子代數的包含與對易：</p>
       <div class="eqbox">$$A\subset B \;\Longleftrightarrow\; \mathcal{A}(A)\subset\mathcal{A}(B)$$</div>
@@ -125,7 +125,7 @@
     </article>
 
     <article class="emerge" data-k="heat">
-      <div class="ehead"><span class="ico">🔥</span><h3>熱（熵）</h3></div>
+      <div class="ehead"><span class="ico"><i data-lucide="flame"></i></span><h3>熱（熵）</h3></div>
       <div class="esrc">Type III → Type II 的跡效應</div>
       <p>引入微擾重力後代數過渡所重現的跡，使原本被視界遮蔽的資訊以熵的形式具現：</p>
       <div class="eqbox">$$S_{\text{gen}}=\frac{\text{Area}}{4G_N}+S_{\text{out}}$$</div>
@@ -133,7 +133,7 @@
     </article>
 
     <article class="emerge" data-k="energy">
-      <div class="ehead"><span class="ico">⚡</span><h3>能量</h3></div>
+      <div class="ehead"><span class="ico"><i data-lucide="zap"></i></span><h3>能量</h3></div>
       <div class="esrc">模哈密頓量擾動 · 幾何阻力</div>
       <p>模哈密頓量 $K$ 是代數內在時間流的生成元（Rindler 中即 Boost 能量）。擾動糾纏態：</p>
       <div class="eqbox">$$\Delta S=\Delta\langle K\rangle$$</div>
@@ -141,7 +141,7 @@
     </article>
 
     <article class="emerge wide" data-k="mass">
-      <div class="ehead"><span class="ico">🎯</span><h3>質量</h3></div>
+      <div class="ehead"><span class="ico"><i data-lucide="target"></i></span><h3>質量</h3></div>
       <div class="esrc">能量聚集 · Nambu–Goto 弦振動的表象</div>
       <p>質量是局域能量的凝聚（$E=mc^2$）。當能量在宏觀時空高度聚集形成時空缺陷，弦/膜的運動由 <strong>Nambu–Goto 作用量</strong>主導。在代數底層，這代表大量 Type II 自由度被「緊緻化／凝聚」在特定時空邊界（弦張力、原子質量），成為觀測者測得的靜止質量。</p>
     </article>
@@ -158,11 +158,11 @@
       <tr><th>宏觀物理概念</th><th>底層代數與量子資訊源頭</th></tr>
     </thead>
     <tbody>
-      <tr><td><span class="ico">⏳</span> 時間 $(t)$</td><td>Type III 代數內在的模自同構流（Modular Flow）</td></tr>
-      <tr><td><span class="ico">🌐</span> 空間（幾何）</td><td>子代數之間的包含對易關係與量子糾纏網絡</td></tr>
-      <tr><td><span class="ico">🔥</span> 熱（熵）</td><td>微擾重力下 Type III → Type II 所重現的代數跡（Trace）</td></tr>
-      <tr><td><span class="ico">⚡</span> 能量 $(E)$</td><td>擾動微觀糾纏時宏觀幾何產生的阻力（模哈密頓量擾動）</td></tr>
-      <tr><td><span class="ico">🎯</span> 質量 $(m)$</td><td>Type II 自由度在時空邊界的凝聚（Nambu–Goto 弦張力）</td></tr>
+      <tr><td><span class="ico"><i data-lucide="hourglass"></i></span> 時間 $(t)$</td><td>Type III 代數內在的模自同構流（Modular Flow）</td></tr>
+      <tr><td><span class="ico"><i data-lucide="globe"></i></span> 空間（幾何）</td><td>子代數之間的包含對易關係與量子糾纏網絡</td></tr>
+      <tr><td><span class="ico"><i data-lucide="flame"></i></span> 熱（熵）</td><td>微擾重力下 Type III → Type II 所重現的代數跡（Trace）</td></tr>
+      <tr><td><span class="ico"><i data-lucide="zap"></i></span> 能量 $(E)$</td><td>擾動微觀糾纏時宏觀幾何產生的阻力（模哈密頓量擾動）</td></tr>
+      <tr><td><span class="ico"><i data-lucide="target"></i></span> 質量 $(m)$</td><td>Type II 自由度在時空邊界的凝聚（Nambu–Goto 弦張力）</td></tr>
     </tbody>
   </table>
   <p class="closing reveal">我們不需要先想像一個有時間、有空間、有質量的宇宙。只要從「一個觀測者能觀測到的局域代數（<span class="mono">It</span>）」出發，重力、時間、熱與質量，全都作為資訊（<span class="mono">Bit</span>）受限後的宏觀投影自動誕生。這，是終極大一統的曙光。</p>
@@ -180,6 +180,7 @@
   <p>視覺化 · Type III von Neumann Algebras &amp; Emergent Spacetime · 內容整理自 Witten et al. 2022–2025</p>
 </footer>
 
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="assets/refs.js"></script>
 <script src="assets/details.js"></script>
 <script src="assets/app.js"></script>

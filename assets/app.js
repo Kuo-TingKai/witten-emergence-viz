@@ -1,3 +1,6 @@
+// ---- render Lucide icons (replaces tacky emoji) ----
+if (window.lucide && lucide.createIcons) lucide.createIcons();
+
 // ---- scroll reveal ----
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("in"); });

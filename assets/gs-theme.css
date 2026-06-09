@@ -63,6 +63,31 @@ body{
 /* 標題下細微金色光暈 */
 .hero h1{text-shadow:0 0 60px rgba(212,175,55,.08)}
 
+/* ---- Lucide 圖示（取代原 emoji）---- */
+/* lucide.createIcons() 會把 <i data-lucide> 轉成 <svg>，stroke=currentColor */
+.ehead .ico{display:inline-flex;align-items:center;justify-content:center}
+.ehead .ico svg{width:26px;height:26px;stroke-width:1.6}
+/* 卡片圖示配色：依概念給暖金家族色 */
+.emerge .ico{color:var(--gold)}
+.emerge[data-k=time] .ico{color:var(--bronze)}
+.emerge[data-k=space] .ico{color:var(--champagne)}
+.emerge[data-k=heat] .ico{color:var(--gold)}
+.emerge[data-k=energy] .ico{color:var(--copper)}
+.emerge[data-k=mass] .ico{color:var(--champagne)}
+
+/* 警示清單圖示 */
+.card.warn ul{list-style:none;padding-left:0}
+.card.warn li{display:flex;align-items:flex-start;gap:.55rem}
+.li-x{color:var(--t3);flex:0 0 auto;margin-top:.25rem}
+.li-x svg,.li-x{width:17px;height:17px}
+.li-warn{color:var(--amber);flex:0 0 auto;margin-top:.25rem}
+.li-warn svg,.li-warn{width:17px;height:17px}
+.card.warn li svg{stroke-width:1.8}
+
+/* 總表圖示 */
+.summary .ico{display:inline-flex;vertical-align:-4px;color:var(--gold)}
+.summary .ico svg{width:18px;height:18px;stroke-width:1.7}
+
 /* ---- 可點擊卡片 + 展開提示 ---- */
 .emerge.clickable{cursor:pointer}
 .emerge.clickable:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
