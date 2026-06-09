@@ -1,0 +1,64 @@
+/* ============================================================
+   Genesis Gold theme — 覆蓋層
+   依 gs-trading-portal 設計 token 重建（來源在 Windows，無法直讀）：
+   warm-black 底 + gold / champagne / copper / bronze accent，
+   Inter / JetBrains Mono 字體（已於 index.html 載入）。
+   做法：remap style.css 用到的語意變數，讓既有規則整批換色。
+   ============================================================ */
+:root{
+  /* warm-black 底 */
+  --bg:#0c0a06;
+  --bg2:#14110a;
+  --ink:#f3ece0;        /* 暖米白 */
+  --muted:#bcae93;      /* champagne-muted */
+  --fine:#8a7e64;
+  --line:rgba(212,175,55,.16);
+  --card:rgba(28,23,13,.6);
+
+  /* 金色家族 — 重新映射原藍紫色票 */
+  --gold:#d4af37;
+  --champagne:#f0d98a;
+  --copper:#b87333;
+  --bronze:#cd7f32;
+
+  --cyan:#e8c66a;       /* 連結 / esrc / 強調 → 香檳金 */
+  --violet:#cd7f32;     /* step-num / 漸層中段 → 古銅 */
+  --indigo:#b87333;     /* → 銅 */
+  --amber:#d4af37;      /* 純金（維持暖調） */
+  --rose:#c87f4a;       /* Type III 標記 → 暖銅 */
+  --green:#f0d98a;      /* Type II 標記 → 淺香檳金（與 III 對比） */
+
+  --t3:#c87f4a;         /* Type III — 銅 */
+  --t2:#f0d98a;         /* Type II  — 香檳金 */
+}
+
+/* 暖黑漸層底（覆蓋 style.css 的藍色 radial） */
+body{
+  background:radial-gradient(1200px 800px at 70% -10%, #1c160c 0%, var(--bg) 55%);
+}
+
+/* 進度條改金屬漸層 */
+#progress{
+  background:linear-gradient(90deg,var(--copper),var(--gold),var(--champagne));
+  box-shadow:0 0 16px rgba(212,175,55,.65);
+}
+
+/* 品牌漸層文字：銅 → 金 → 香檳 */
+.grad{
+  background:linear-gradient(120deg,var(--copper),var(--gold) 50%,var(--champagne));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* scroll cue / hover 金調 */
+.scroll-cue{background:rgba(212,175,55,.06);color:var(--gold)}
+.scroll-cue:hover{background:rgba(212,175,55,.14)}
+
+/* eqbox 強調框金邊 */
+.eqbox.big{border-color:rgba(212,175,55,.32)}
+.card.hl{border-color:rgba(212,175,55,.32);background:rgba(28,23,13,.66)}
+
+/* 卡片 hover 邊框轉金 */
+.emerge:hover{border-color:rgba(212,175,55,.42)}
+
+/* 標題下細微金色光暈 */
+.hero h1{text-shadow:0 0 60px rgba(212,175,55,.08)}

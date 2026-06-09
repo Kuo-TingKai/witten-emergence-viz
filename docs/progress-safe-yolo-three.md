@@ -20,6 +20,13 @@
 - 啟用 GitHub Pages（master / root）→ **線上 URL：https://kuo-tingkai.github.io/witten-emergence-viz/**（首次建置約 1–2 分鐘）。
 - 註：Genesis 主題來源在 Windows（`C:\Users\User\gs-trading-portal`），Linux 端無法存取 → M2 改依設計 token 重建。
 
+### M2 — Genesis gold 主題 ✅
+- 來源 `C:\Users\User\gs-trading-portal` 在 Linux 不可達 → 依 skill 文件 token 重建。
+- 新增 `assets/gs-theme.css` 覆蓋層：remap 既有語意變數（--cyan/--violet/--rose/--amber/--green/--t3/--t2）為金色家族，整批換色而不動 selector。
+- 暖黑 radial 底、金屬漸層進度條、銅→金→香檳品牌漸層字。
+- `app.js` 背景糾纏網絡改金/香檳色（連線 #d4af37、節點 #f0d98a）。
+- index.html 於 style.css 後注入 gs-theme.css（覆蓋順序正確）。
+
 ## Fallback 指引
 - Rollback 到某 milestone：`git log --oneline` 找 `Mn:` commit，`git reset --hard <hash>`。
 - 關鍵檔案：`index.html`（結構）、`assets/style.css`（基底樣式）、`assets/gs-theme.css`（M2 主題，覆蓋層）、`assets/app.js`（M3 互動）、`assets/refs.js`（文獻）。

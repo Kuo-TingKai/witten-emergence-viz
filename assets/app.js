@@ -42,7 +42,7 @@ if (c && !reduce) {
         const d = Math.hypot(dx, dy);
         if (d < LINK) {
           const a = (1 - d / LINK) * .22;
-          ctx.strokeStyle = `rgba(120,150,255,${a})`;
+          ctx.strokeStyle = `rgba(212,175,55,${a})`; // gold links
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(pts[i].x, pts[i].y);
@@ -52,7 +52,7 @@ if (c && !reduce) {
       }
     }
     for (const p of pts) {
-      ctx.fillStyle = "rgba(167,123,255,.55)";
+      ctx.fillStyle = "rgba(240,217,138,.6)"; // champagne nodes
       ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2); ctx.fill();
     }
     requestAnimationFrame(tick);
