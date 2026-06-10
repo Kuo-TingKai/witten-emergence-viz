@@ -7,6 +7,14 @@
 
 採 Genesis gold 視覺主題（暖黑底 + gold / champagne / copper / bronze）。點擊任一張「湧現卡片」可展開該概念的數學推導 modal。
 
+右上角（手機在底部置中）有 **解釋深度切換**，同一套推導可切三種講法：
+
+- **專業** — 原本的算符代數語言（Type III₁、模交叉積、Tomita–Takesaki…），給有物理／數學背景的讀者。
+- **硬科普** — 面向有科學／工程背景的人，保留關鍵公式，但用直覺說明取代術語。
+- **軟科普** — 面向一般大眾，純文字、隱藏公式，全程以日常比喻講解。
+
+選擇會記在 `localStorage`。版面採手機 / 平板 / 桌機三段式自適應。
+
 ## 這份視覺化講什麼
 
 一條從「一個觀測者的局域代數」出發的推導鏈：
@@ -56,7 +64,10 @@ witten-emergence-viz/
 ├── assets/
 │   ├── style.css       # 基底版面：流程圖、卡片、reveal
 │   ├── gs-theme.css    # Genesis gold 主題覆蓋層 + modal 樣式
+│   ├── responsive.css  # 手機 / 平板 / 桌機三段式自適應佈局
+│   ├── modes.css       # 解釋深度切換器樣式 + 三級變體顯隱
 │   ├── app.js          # scroll reveal、進度條、糾纏網絡背景動畫
+│   ├── modes.js        # 專業 / 硬科普 / 軟科普 切換（localStorage）
 │   ├── details.js      # 卡片點擊 → 數學細節 modal（湧現 5 卡 + RT/JLMS/TQFT 3 卡）
 │   └── refs.js         # 24 篇參考文獻清單（對應原始留言索引）
 ├── docs/

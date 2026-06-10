@@ -1,0 +1,60 @@
+/* ============================================================
+   解釋模式系統 — 專業 / 硬科普 / 軟科普 三段式切換
+   body.m-pro / body.m-hard / body.m-soft 控制顯隱。
+   變體元素標 class="lvl pro" / "lvl hard" / "lvl soft"（可並用，
+   例如公式標 "lvl pro hard" → 專業與硬科普顯示、軟科普隱藏）。
+   ============================================================ */
+
+/* 變體預設隱藏，只顯示與當前模式相符者 */
+.lvl{ display:none; }
+body.m-pro  .lvl.pro,
+body.m-hard .lvl.hard,
+body.m-soft .lvl.soft{ display:revert; }
+
+/* 軟科普：藏掉裸公式與「展開數學細節」入口，純文字閱讀 */
+body.m-soft .eqbox{ display:none; }
+body.m-soft .hero-eq{ display:none; }
+body.m-soft .expand-hint{ display:none; }
+/* 軟科普下卡片不再可點開數學 modal（整張卡停用指標事件） */
+body.m-soft .emerge.clickable{ cursor:default; pointer-events:none; }
+
+/* ---------- 切換器 ---------- */
+#mode-switch{
+  position:fixed; top:12px; right:14px; z-index:60;
+  display:flex; align-items:center; gap:.15rem;
+  background:rgba(20,17,10,.82); backdrop-filter:blur(12px);
+  border:1px solid var(--line); border-radius:999px;
+  padding:.28rem; box-shadow:0 8px 30px rgba(0,0,0,.4);
+}
+#mode-switch .ms-label{
+  font-size:.66rem; letter-spacing:.12em; color:var(--fine);
+  padding:0 .5rem 0 .65rem; text-transform:uppercase; user-select:none;
+}
+#mode-switch button{
+  font-family:inherit; font-size:.8rem; font-weight:600;
+  color:var(--muted); background:transparent; border:0; cursor:pointer;
+  padding:.42rem .78rem; border-radius:999px; transition:.22s; white-space:nowrap;
+}
+#mode-switch button:hover{ color:var(--ink); }
+#mode-switch button.on{
+  color:#1a1408;
+  background:linear-gradient(120deg,var(--copper),var(--gold) 55%,var(--champagne));
+  box-shadow:0 2px 12px rgba(212,175,55,.35);
+}
+#mode-switch button:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+/* 模式提示句（標題下，依模式換字） */
+.mode-note{
+  font-size:.82rem; color:var(--fine); margin:-.4rem 0 1.4rem;
+  letter-spacing:.02em;
+}
+
+/* ---------- 切換器 RWD ---------- */
+@media (max-width:560px){
+  #mode-switch{
+    top:auto; bottom:12px; right:50%; transform:translateX(50%);
+    padding:.24rem;
+  }
+  #mode-switch .ms-label{ display:none; }
+  #mode-switch button{ font-size:.76rem; padding:.4rem .7rem; }
+}

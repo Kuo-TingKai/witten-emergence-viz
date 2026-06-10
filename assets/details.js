@@ -100,8 +100,8 @@ const DETAILS = {
         <li>$G_N$：Bulk 的牛頓重力常數。</li>
       </ul>
 
-      <h4>2. 玩味點 · 時空是糾纏拉出來的</h4>
-      <p>你改變邊界量子位元之間的糾纏狀態（改變 $S(A)$），為了維持等式，內部的幾何度規 (Metric) 就必須跟著改變，進而改變極小曲面的面積。當邊界沒有糾纏（$S(A)=0$），對應的內部曲面面積就是 $0$ —— 代表時空直接<strong>「斷開」或消失</strong>。時空的連續性，在數學上就是由糾纏硬生生「拉」出來的。</p>
+      <h4>2. 關鍵 · 時空由糾纏決定</h4>
+      <p>你改變邊界量子位元之間的糾纏狀態（改變 $S(A)$），為了維持等式，內部的幾何度規 (Metric) 就必須跟著改變，進而改變極小曲面的面積。當邊界沒有糾纏（$S(A)=0$），對應的內部曲面面積就是 $0$ —— 代表時空在那裡<strong>斷開或消失</strong>。時空的連續性，在數學上正是由糾纏決定的。</p>
       <p class="fine">這是上節〈空間〉卡 $S=\\min_\\gamma\\mathrm{ext}[\\frac{\\text{Area}}{4G_N}+S_{\\text{bulk}}]$ 的經典極限版本（忽略 bulk 熵項），換成 QEC 視角的入口。</p>
     `
   },
@@ -119,7 +119,7 @@ const DETAILS = {
       <div class="eqbox">$$V\\,\\phi_b\\,P_{\\text{code}}=O_A\\,V\\,P_{\\text{code}}$$</div>
       <p>其中 $P_{\\text{code}}=VV^\\dagger$ 是代碼子空間的投射算子，$O_A$ 是只作用在邊界區域 $A$ 的算子。</p>
 
-      <h4>2. 玩味點 · 內部 = 抗抹除碼</h4>
+      <h4>2. 關鍵 · 內部 = 抗抹除碼</h4>
       <p>這意味著：Bulk 內部的某個時空點 $b$，若落在由區域 $A$ 決定的<strong>糾纏楔 (Entanglement Wedge)</strong> 之內，那麼即使邊界其餘部分（$A$ 的補集）遭到嚴重的量子噪聲破壞（<strong>抹除錯誤 Erasure Error</strong>），我們依然能單憑區域 $A$ 的算子 $O_A$ 把內部的時空資訊完整還原。時空的「內部」，在數學上就是一個對抗邊界抹除錯誤的物理 <strong>Code Subspace</strong>。</p>
     `
   },
@@ -136,13 +136,13 @@ const DETAILS = {
       <p>這時邊界的希爾伯特空間 $V(\\Sigma)$ 滿足 TQFT 的公理：</p>
       <div class="eqbox">$$\\dim V(\\Sigma)=Z(\\Sigma\\times S^1)$$</div>
 
-      <h4>2. 玩味點 · 拓撲算子 ≡ 邏輯算子</h4>
+      <h4>2. 關鍵 · 拓撲算子 ≡ 邏輯算子</h4>
       <p>若把代碼子空間 $\\mathcal{H}_{\\text{code}}$ 的維度與 TQFT 在流形 $\\Sigma$ 上的狀態數連起來，你會發現：內部的 TQFT 算子，正好對應 QEC 中的<strong>邏輯算子 (Logical Operators)</strong>。因為 TQFT 算子都是拓撲算子（例如 Wilson Loop），把它在內部時空稍微挪動、形變，測量結果完全不變 —— 這正是邏輯算子的特徵：對局部物理微擾（局部噪聲）完全免疫。</p>
       <ul>
         <li><strong>TQFT 說</strong>：這個算子怎麼拉扯都不變，因為它是拓撲的。</li>
         <li><strong>QEC 說</strong>：這個算子怎麼干擾都不錯誤，因為它是邏輯算子。</li>
       </ul>
-      <p>這兩句話在數學上，透過 $V:\\text{Bord}\\to\\text{Vec}$ 完美融合在了一起。</p>
+      <p>這兩句話在數學上，透過 $V:\\text{Bord}\\to\\text{Vec}$ 對應到了一起。</p>
     `
   }
 };
