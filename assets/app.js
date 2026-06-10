@@ -22,10 +22,17 @@ const c = document.getElementById("bg-field");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (c && !reduce) {
   const ctx = c.getContext("2d");
-  let w, h, pts;
-  const N = 70, LINK = 150;
+  let w, h, pts, N, LINK;
   function resize() {
-    w = c.width = innerWidth; h = c.height = innerHeight;
+    w = innerWidth; h = innerHeight;
+    // hi-DPI: 以 devicePixelRatio（上限 2）放大實體像素，CSS 尺寸維持邏輯像素 → 手機/Retina 線條清晰不模糊
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    c.width = w * dpr; c.height = h * dpr;
+    c.style.width = w + "px"; c.style.height = h + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // 依螢幕寬度調整密度：手機少節點省電、桌機維持原貌
+    N = w < 600 ? 34 : w < 900 ? 50 : 70;
+    LINK = w < 600 ? 120 : 150;
     pts = Array.from({ length: N }, () => ({
       x: Math.random() * w, y: Math.random() * h,
       vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25

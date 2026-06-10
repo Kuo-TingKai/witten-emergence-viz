@@ -1,0 +1,100 @@
+/* ============================================================
+   Responsive layout — 桌機 / 平板 / 手機 三段式自適應
+   覆蓋層：掛在 style.css + gs-theme.css 之後，只調版面、不動配色。
+   斷點：
+     ≥1025px  桌機     預設（maxw 920，雙欄卡片）
+     ≤1024px  平板橫    收窄 gutter，維持雙欄
+     ≤760px   平板直/大手機  卡片轉單欄（style.css 已處理）、流程圖垂直堆疊
+     ≤560px   手機     收斂字級/間距、表格不溢出
+   ============================================================ */
+
+/* 防止 iOS 橫置時自動放大字、允許長公式/程式碼水平捲動不撐破版面 */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body{ overflow-x:hidden; }
+img,svg,canvas,table{ max-width:100%; }
+
+/* 全站可換行的等寬標記，避免長 token 撐破窄欄 */
+.mono{ overflow-wrap:anywhere; }
+
+/* ---------- 平板橫向 ---------- */
+@media (max-width:1024px){
+  :root{ --maxw:840px; }
+  main{ padding:0 clamp(18px,3.5vw,24px); }
+  .hero{ padding:6vh clamp(18px,3.5vw,24px); }
+}
+
+/* ---------- 平板直向 / 大手機 ---------- */
+@media (max-width:760px){
+  .step{ padding:7vh 0; }
+  .step h2{ margin-bottom:1.4rem; }
+  .center-lede{ max-width:none; }
+
+  /* 流程圖：水平 → 垂直堆疊；箭頭由橫轉直 */
+  .flow{ flex-direction:column; gap:1rem; margin:2.2rem 0; }
+  .flow .node{ width:100%; max-width:340px; min-width:0; }
+  .arrow{ min-width:0; flex-direction:column; padding:.2rem 0; }
+  .arrow-line{
+    width:2px; height:42px;
+    background:linear-gradient(180deg,var(--t3),var(--t2));
+  }
+  .arrow-line::after{
+    content:"▼"; right:auto; left:50%; top:auto; bottom:-9px;
+    transform:translateX(-50%);
+  }
+  .pulse{ animation:flow-v 2.2s linear infinite; left:-3px; top:0; }
+
+  /* 分支兩節點：窄螢幕並排成兩欄，省垂直空間 */
+  .branch{ flex-direction:row; gap:.8rem; width:100%; max-width:340px; }
+  .branch .node{ flex:1 1 0; padding:.9rem .7rem; }
+
+  /* QEC 階梯每一橫桿也吃上面的垂直堆疊（無 branch，直接 info→geo） */
+  .qec-ladder .flow{ margin:1.4rem 0; }
+}
+
+/* 流程圖脈衝點的垂直版動畫（搭配上面媒體查詢使用） */
+@keyframes flow-v{
+  0%{ top:0; opacity:0 }
+  10%{ opacity:1 }
+  90%{ opacity:1 }
+  100%{ top:38px; opacity:0 }
+}
+
+/* ---------- 手機 ---------- */
+@media (max-width:560px){
+  main{ padding:0 16px; }
+  .hero{ padding:7vh 16px 5vh; min-height:88vh; }
+  .step{ padding:6vh 0; }
+
+  /* 卡片/方塊內距收斂 */
+  .card,.emerge{ padding:1.2rem 1.15rem; border-radius:14px; }
+  .ehead .ico svg{ width:23px; height:23px; }
+  .ehead h3{ font-size:1.18rem; }
+  .emerge p,.card li{ font-size:.92rem; }
+
+  /* 公式框：縮內距，保留水平捲動以容納長公式 */
+  .eqbox{ padding:.3rem .7rem; }
+
+  /* 總覽表：取消首欄 nowrap，縮間距字級，避免橫向溢出 */
+  .summary{ font-size:.9rem; }
+  .summary th,.summary td{ padding:.7rem .55rem; }
+  .summary td:first-child{ white-space:normal; }
+
+  /* 結語區左border縮排 */
+  .closing{ padding-left:1rem; font-size:1rem; }
+
+  /* 分支在最窄處改回上下堆疊（並排會太擠） */
+  .branch{ flex-direction:column; }
+  .branch .node{ width:100%; }
+}
+
+/* ---------- 超小手機 ---------- */
+@media (max-width:380px){
+  .hero h1{ font-size:1.85rem; }
+  .step-num{ font-size:.82rem; }
+}
+
+/* ---------- 觸控裝置：移除 hover 位移避免黏滯 ---------- */
+@media (hover:none){
+  .emerge:hover{ transform:none; }
+  .scroll-cue:hover{ transform:none; }
+}
