@@ -10,6 +10,10 @@ window.I18N["zh-Hant"] = {
   ui: {
     depthLabel: "解釋深度",
     langLabel: "語言",
+    viewLabel: "視圖",
+    viewScroll: "捲動",
+    viewShowcase: "展廳",
+    scHint: "拖曳・方向鍵・滾輪旋轉 · 點擊中央卡片展開數學細節",
     pro: "專業", hard: "硬科普", soft: "軟科普",
     scrollCue: "往下看推導 ↓",
     expandHint: "點擊展開數學細節 →",

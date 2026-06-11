@@ -46,6 +46,15 @@
 - `gs-theme.css` 加 `.qec-ladder` / `.n-info` / `.n-geo` / `.puzzle` / `.todo` 樣式 + 新 data-k accent bar 與圖示色 + `#modal-body ul/li`。
 - `refs.js` 續編 20–24：RT(hep-th/0603001)、ADH(1411.7041)、JLMS(1512.06431)、HaPPY(1503.06237)、Witten Jones/Chern–Simons(BF01217730)。
 
+### M5 — 展廳模式（3D 旋轉木馬卡片瀏覽）✅
+- 在既有 `#switchers` 列注入第三條 **視圖：捲動 / 展廳** 切換 bar；視圖選擇存 `localStorage`（`witten-view`），重載記住，預設捲動。
+- 技術選型 **CSS 3D**（非 Three.js）：把 `main .emerge` 全部 10 張卡複製成環上的面（`rotateY(i·step) translateZ(radius)`），整個環 `rotateY(--rot)` 旋轉。100% 復用既有卡片內容 / i18n / MathJax / modal，零外部依賴、無 build。
+- 互動：拖曳（Pointer Events）/ 方向鍵 / 滾輪 / 圓點切換，鬆手吸附最近一張；中央卡點擊 → 觸發原卡 `.click()` → 既有金色 modal。
+- 連動 i18n：`i18n:rendered` 時重建面內容（隨語言 / 深度）；軟科普模式自動關閉中央卡可點性。
+- 新增 `assets/showcase.js` + `assets/showcase.css`；`i18n/{zh-Hant,en}.js` 加 `ui.viewLabel/viewScroll/viewShowcase/scHint`；`index.html` 掛載兩檔。
+- 修掉三個 3D carousel 通病：①側卡 2D 投影攔截中央點擊 → 僅 `.is-front` 給 `pointer-events:auto`；②`pointerdown` 立即 `setPointerCapture` 吃掉 click → 改成偵測到實際拖動後才 capture；③Escape 同時關 modal 又退出展廳 → 展廳 keydown 改 capture 階段，modal 開著時放手。
+- 驗證：Playwright 實測桌機 + 390px 手機（旋轉、開 modal、切語言重建、Escape 兩段行為、RWD 圓點避開底部切換器）。
+
 ## Fallback 指引
 - Rollback 到某 milestone：`git log --oneline` 找 `Mn:` commit，`git reset --hard <hash>`。
 - 關鍵檔案：`index.html`（結構）、`assets/style.css`（基底樣式）、`assets/gs-theme.css`（M2 主題，覆蓋層）、`assets/app.js`（M3 互動）、`assets/refs.js`（文獻）。

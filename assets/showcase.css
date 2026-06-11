@@ -1,0 +1,157 @@
+/* ============================================================
+   展廳模式 · 3D 旋轉木馬卡片瀏覽 (CSS 3D Character Carousel)
+   ------------------------------------------------------------
+   把 main 內所有 .emerge 卡複製到一個環形 3D 軌道上，拖曳 / 方向鍵 /
+   滾輪 / 點擊旋轉，正中央卡片放大、可點開既有金色 modal。
+   幾何由 JS 設定 CSS 變數：--n（卡數）、--step（每張夾角）、
+   --cardw / --cardh / --radius（環半徑）；--rot 為環的當前旋轉角。
+   ============================================================ */
+
+/* 進入展廳：鎖捲動、藏掉捲動式進度條 */
+body.v-showcase{ overflow:hidden; }
+body.v-showcase #progress{ display:none; }
+
+/* ---------- 全螢幕舞台（在切換器 z60 之下、modal z100 之下）---------- */
+#showcase{
+  position:fixed; inset:0; z-index:40; display:none;
+  background:radial-gradient(1200px 820px at 50% -8%, #1c160c 0%, var(--bg) 62%);
+}
+body.v-showcase #showcase{ display:block; }
+
+.sc-stage{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  perspective:1500px; perspective-origin:50% 44%;
+}
+
+/* ---------- 環 ---------- */
+.sc-ring{
+  position:relative;
+  width:var(--cardw,340px); height:var(--cardh,440px);
+  transform-style:preserve-3d;
+  transform:translateZ(calc(var(--radius,560px) * -1)) rotateY(var(--rot,0deg));
+  transition:transform .62s cubic-bezier(.22,.7,.18,1);
+}
+.sc-ring.dragging{ transition:none; }
+
+/* ---------- 每張面 ---------- */
+.sc-face{
+  position:absolute; inset:0;
+  transform:rotateY(calc(var(--i) * var(--step,36deg))) translateZ(var(--radius,560px));
+  opacity:.38; filter:saturate(.6) brightness(.62) blur(.4px);
+  transition:opacity .5s ease, filter .5s ease;
+  -webkit-tap-highlight-color:transparent;
+  /* 3D 命中測試：被旋到側邊的卡 2D 投影仍會蓋住中央卡，故僅中央接受指標事件。
+     側卡切換交給拖曳 / 方向鍵 / 滾輪 / 圓點。*/
+  pointer-events:none;
+}
+.sc-face.is-front{ opacity:1; filter:none; pointer-events:auto; cursor:default; }
+
+/* 卡身：沿用 .emerge 視覺，但獨立於捲動版 hover 規則 */
+.sc-card{
+  position:relative; width:100%; height:100%;
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius-card,18px);
+  padding:1.6rem 1.7rem; overflow:hidden;
+  backdrop-filter:blur(8px);
+  transition:transform .5s cubic-bezier(.22,.7,.18,1), box-shadow .5s ease, border-color .5s ease;
+}
+.sc-face::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+.sc-face[data-k=time]::before{ background:var(--violet); }
+.sc-face[data-k=space]::before{ background:var(--cyan); }
+.sc-face[data-k=heat]::before{ background:var(--amber); }
+.sc-face[data-k=energy]::before{ background:var(--indigo); }
+.sc-face[data-k=mass]::before{ background:var(--green); }
+.sc-face[data-k=rt]::before{ background:var(--champagne); }
+.sc-face[data-k=jlms]::before{ background:var(--copper); }
+.sc-face[data-k=tqft]::before{ background:var(--gold); }
+.sc-face[data-k=happy]::before{ background:var(--bronze); }
+.sc-face[data-k=cs]::before{ background:var(--bronze); }
+
+/* 內容版式（縮放以塞進固定卡身，底部漸隱避免硬切） */
+.sc-card .ehead{ display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem; }
+.sc-card .ehead .ico{ color:var(--gold); display:inline-flex; }
+.sc-card .ehead h3{ margin:0; font-size:1.22rem; font-weight:700; }
+.sc-card .ebody{ font-size:.92rem; line-height:1.7; color:var(--muted);
+  -webkit-mask-image:linear-gradient(180deg,#000 78%,transparent); mask-image:linear-gradient(180deg,#000 78%,transparent); }
+.sc-card .ebody p{ margin:.5rem 0; }
+.sc-card .puzzle{ color:var(--gold); font-weight:600; }
+
+/* 中央卡：放大 + 金光暈，可點才給手勢 */
+.sc-face.is-front .sc-card{
+  transform:scale(1.05);
+  border-color:rgba(212,175,55,.5);
+  box-shadow:0 24px 70px rgba(0,0,0,.55), 0 0 42px rgba(212,175,55,.22);
+}
+.sc-face.is-front.openable .sc-card{ cursor:pointer; }
+.sc-face.is-front.openable:hover .sc-card{ box-shadow:0 26px 80px rgba(0,0,0,.6), 0 0 56px rgba(212,175,55,.34); }
+
+/* 中央卡底部「展開數學細節」提示（僅可點時顯示）*/
+.sc-face .sc-open{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:1.8rem 1.7rem 1.1rem;
+  font-size:.8rem; font-weight:600; color:var(--gold);
+  display:none; align-items:center; gap:.35rem;
+  background:linear-gradient(0deg, rgba(20,16,8,.99) 42%, rgba(20,16,8,.92) 70%, transparent);
+}
+.sc-face.is-front.openable .sc-open{ display:flex; }
+
+/* ---------- 控制：離開、上一張 / 下一張、圓點、提示 ---------- */
+.sc-exit{
+  position:absolute; top:14px; left:16px; z-index:3;
+  width:40px; height:40px; border-radius:999px;
+  background:rgba(28,23,13,.82); border:1px solid var(--line);
+  color:var(--gold); font-size:1.05rem; cursor:pointer; line-height:1;
+  backdrop-filter:blur(12px); transition:.25s;
+}
+.sc-exit:hover{ background:rgba(212,175,55,.18); transform:rotate(90deg); }
+
+.sc-nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+  width:52px; height:52px; border-radius:999px;
+  background:rgba(28,23,13,.78); border:1px solid var(--line);
+  color:var(--gold); font-size:1.7rem; line-height:1; cursor:pointer;
+  backdrop-filter:blur(12px); transition:.22s;
+  display:flex; align-items:center; justify-content:center;
+}
+.sc-nav:hover{ background:rgba(212,175,55,.18); border-color:rgba(212,175,55,.45); }
+.sc-prev{ left:max(18px, 4vw); }
+.sc-next{ right:max(18px, 4vw); }
+
+.sc-dots{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:54px; z-index:3;
+  display:flex; gap:.5rem; max-width:90vw; flex-wrap:wrap; justify-content:center;
+}
+.sc-dots button{
+  width:9px; height:9px; padding:0; border-radius:999px;
+  border:1px solid rgba(212,175,55,.5); background:transparent; cursor:pointer;
+  transition:.25s;
+}
+.sc-dots button.on{
+  background:linear-gradient(120deg,var(--copper),var(--gold),var(--champagne));
+  border-color:transparent; transform:scale(1.35);
+}
+
+.sc-hint{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:20px; z-index:3;
+  font-size:.74rem; letter-spacing:.04em; color:var(--fine);
+  text-align:center; max-width:92vw; user-select:none; pointer-events:none;
+}
+
+/* ---------- RWD ---------- */
+@media (max-width:680px){
+  .sc-stage{ perspective:1100px; perspective-origin:50% 42%; }
+  .sc-nav{ width:44px; height:44px; font-size:1.4rem; }
+  .sc-card{ padding:1.3rem 1.4rem; }
+  .sc-card .ehead h3{ font-size:1.08rem; }
+  .sc-card .ebody{ font-size:.86rem; line-height:1.6; }
+  /* 手機：切換器移到畫面底部，故圓點抬到頂部（離開按鈕右側），提示文字省略 */
+  .sc-dots{ top:18px; bottom:auto; left:auto; right:14px; transform:none; max-width:62vw; justify-content:flex-end; }
+  .sc-hint{ display:none; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .sc-ring{ transition:none; }
+  .sc-card{ transition:none; }
+  .sc-face{ transition:opacity .2s linear; }
+}

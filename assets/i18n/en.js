@@ -10,6 +10,10 @@ window.I18N["en"] = {
   ui: {
     depthLabel: "Level",
     langLabel: "Language",
+    viewLabel: "View",
+    viewScroll: "Scroll",
+    viewShowcase: "Gallery",
+    scHint: "Drag · arrow keys · wheel to rotate · click the center card for the math",
     pro: "Expert", hard: "Science", soft: "Plain",
     scrollCue: "Scroll for the derivation ↓",
     expandHint: "Tap to expand the math →",
