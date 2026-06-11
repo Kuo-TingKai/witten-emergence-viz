@@ -1,53 +1,55 @@
 /* ============================================================
-   Witten 英靈 · 半透明金色光靈浮游 + 名言氣泡
+   Witten 英靈 · Q 版粒子畫像（半透明發光、像靈魂）+ 名言氣泡
    ------------------------------------------------------------
    #spirit 為 fixed 容器（pointer-events:none，不擋內容點擊），由 JS
-   以 transform:translate 在視窗內漂移；只有光靈本體可點（點一下換名言）。
+   以 transform:translate 在視窗內漂移；只有畫像本體可點（點一下換名言）。
+   畫像 = 發光粒子(.fig-dots) + 淡金連線(.fig-lines) + 柔光暈(.fig-aura)。
    z-index 55：在展廳 overlay(40) 之上、切換器(60) 與 modal(100) 之下。
    ============================================================ */
 
 #spirit{
   position:fixed; top:0; left:0; z-index:55;
   pointer-events:none; will-change:transform;
-  transform:translate(50vw, 40vh);
+  transform:translate(50vw, 38vh);
 }
 
-/* ---------- 光靈本體 ---------- */
+/* ---------- Q 版粒子畫像 ---------- */
 .spirit-wisp{
-  position:relative; width:62px; height:62px;
+  position:relative; width:100px; height:130px;
   pointer-events:auto; cursor:pointer;
-  animation:spirit-bob 6s ease-in-out infinite;
+  animation:spirit-bob 6.5s ease-in-out infinite;
 }
-.sw-core{
-  position:absolute; inset:17px; border-radius:50%;
-  background:radial-gradient(circle at 38% 34%,
-    rgba(255,248,224,.95), var(--champagne) 36%, var(--gold) 70%, rgba(212,175,55,0) 100%);
-  box-shadow:0 0 26px 8px rgba(212,175,55,.45);
-  animation:spirit-pulse 3.4s ease-in-out infinite;
+.spirit-fig{
+  display:block; width:100px; height:130px; overflow:visible;
+  opacity:.9;
+  filter:drop-shadow(0 0 5px rgba(212,175,55,.5));
 }
-.sw-halo{
-  position:absolute; inset:-4px; border-radius:50%;
-  background:radial-gradient(circle, rgba(212,175,55,.30), rgba(212,175,55,0) 66%);
-  animation:spirit-breathe 5s ease-in-out infinite;
+/* 柔光「靈體」暈 */
+.fig-aura{
+  fill:rgba(212,175,55,.12);
+  animation:spirit-breathe 5.5s ease-in-out infinite;
 }
-.sw-spark{
-  position:absolute; top:50%; left:50%; width:4px; height:4px; border-radius:50%;
-  background:var(--champagne); box-shadow:0 0 8px var(--gold);
-  margin:-2px 0 0 -2px;
+/* 構成輪廓的發光粒子 */
+.fig-dots circle{
+  fill:var(--champagne);
+  transform-box:fill-box; transform-origin:center;
+  animation:fig-spark 3.2s ease-in-out infinite;
+  animation-delay:var(--d,0s);
 }
-.sw-spark.s1{ animation:spirit-orbit 7s linear infinite; }
-.sw-spark.s2{ animation:spirit-orbit 9s linear infinite reverse; opacity:.8; }
-.sw-spark.s3{ animation:spirit-orbit 11s linear infinite; opacity:.6; }
+/* 淡金連線（星座感）*/
+.fig-lines line{
+  stroke:rgba(212,175,55,.26); stroke-width:.5;
+}
 
 .spirit-name{
-  position:absolute; top:60px; left:50%; transform:translateX(-50%);
+  position:absolute; top:128px; left:50%; transform:translateX(-50%);
   font-size:.6rem; letter-spacing:.14em; text-transform:uppercase;
   color:var(--gold); opacity:.62; white-space:nowrap; pointer-events:none;
 }
 
-/* ---------- 名言氣泡 ---------- */
+/* ---------- 名言氣泡（置於畫像上方）---------- */
 .spirit-bubble{
-  position:absolute; bottom:74px; left:50%;
+  position:absolute; bottom:138px; left:50%;
   width:min(282px,74vw);
   transform:translateX(-50%) translateY(10px); opacity:0;
   transition:opacity .55s ease, transform .55s ease;
@@ -57,7 +59,7 @@
   pointer-events:none;
 }
 .spirit-bubble.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-.spirit-bubble::after{   /* 指向光靈的小尾巴（下方）*/
+.spirit-bubble::after{   /* 指向畫像的小尾巴（下方）*/
   content:""; position:absolute; bottom:-7px; left:50%;
   width:12px; height:12px; transform:translateX(-50%) rotate(45deg);
   background:rgba(20,16,8,.93); border-right:1px solid var(--line); border-bottom:1px solid var(--line);
@@ -68,7 +70,7 @@
   color:var(--gold); text-align:right; font-style:normal; }
 
 /* 氣泡翻轉：靠近頂端時改向下開（尾巴移到上方）*/
-.spirit-bubble.flip-y{ bottom:auto; top:74px; transform:translateX(-50%) translateY(-10px); }
+.spirit-bubble.flip-y{ bottom:auto; top:138px; transform:translateX(-50%) translateY(-10px); }
 .spirit-bubble.flip-y.show{ transform:translateX(-50%) translateY(0); }
 .spirit-bubble.flip-y::after{ bottom:auto; top:-7px; border:0;
   border-left:1px solid var(--line); border-top:1px solid var(--line); }
@@ -79,20 +81,21 @@
 
 /* ---------- 動畫 ---------- */
 @keyframes spirit-bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-9px); } }
-@keyframes spirit-pulse{ 0%,100%{ transform:scale(1); opacity:.92; } 50%{ transform:scale(1.12); opacity:1; } }
-@keyframes spirit-breathe{ 0%,100%{ transform:scale(1); opacity:.85; } 50%{ transform:scale(1.35); opacity:.5; } }
-@keyframes spirit-orbit{ from{ transform:rotate(0) translateX(26px) rotate(0); } to{ transform:rotate(360deg) translateX(26px) rotate(-360deg); } }
+@keyframes spirit-breathe{ 0%,100%{ transform:scale(1); opacity:.85; } 50%{ transform:scale(1.18); opacity:.5; } }
+@keyframes fig-spark{ 0%,100%{ opacity:.38; transform:scale(.82); } 50%{ opacity:.96; transform:scale(1.18); } }
 
-/* 行動裝置：光靈略縮 */
+/* 行動裝置：畫像略縮 */
 @media (max-width:680px){
-  .spirit-wisp{ width:52px; height:52px; }
-  .sw-core{ inset:14px; }
-  .spirit-bubble{ width:min(240px,82vw); }
+  .spirit-wisp, .spirit-fig{ width:84px; height:110px; }
+  .spirit-name{ top:108px; }
+  .spirit-bubble{ width:min(240px,82vw); bottom:118px; }
+  .spirit-bubble.flip-y{ top:118px; }
 }
 
-/* 尊重「減少動態」偏好：不漂移、不脈動，僅靜態金點 + 名言淡入 */
+/* 尊重「減少動態」偏好：不漂移、不閃爍 */
 @media (prefers-reduced-motion:reduce){
   #spirit{ transition:none !important; }
-  .spirit-wisp, .sw-core, .sw-halo, .sw-spark{ animation:none !important; }
+  .spirit-wisp, .fig-aura, .fig-dots circle{ animation:none !important; }
+  .fig-dots circle{ opacity:.8; }
   .spirit-bubble{ transition:opacity .3s linear; }
 }

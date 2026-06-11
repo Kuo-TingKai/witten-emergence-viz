@@ -21,6 +21,73 @@
   function spirit() { return dict().spirit || {}; }
   function quotes() { return spirit().quotes || []; }
 
+  // ---------- Q 版 Witten 粒子畫像（手工參數化 SVG）----------
+  // 用發光粒子 + 淡金連線勾出辨識特徵：高額禿頂、兩側留髮、眼鏡、微笑、小身體。
+  // viewBox 0 0 120 156；JS 算點，CSS 負責閃爍與半透明發光。
+  function genFigure() {
+    const dots = [], lines = [];
+    const D = (x, y, s) => dots.push([+x.toFixed(1), +y.toFixed(1), s || 1]);
+    const L = (a, b) => lines.push([+a[0].toFixed(1), +a[1].toFixed(1), +b[0].toFixed(1), +b[1].toFixed(1)]);
+    const rad = d => d * Math.PI / 180;
+    function arc(cx, cy, rx, ry, a0, a1, n, o) {
+      o = o || {}; const pts = [];
+      for (let i = 0; i < n; i++) {
+        const t = a0 + (a1 - a0) * (n === 1 ? 0 : i / (n - 1));
+        const x = cx + rx * Math.cos(rad(t)), y = cy + ry * Math.sin(rad(t));
+        pts.push([x, y]); D(x, y, o.s);
+      }
+      if (o.link) { for (let i = 0; i < pts.length - 1; i++) L(pts[i], pts[i + 1]); if (o.close) L(pts[pts.length - 1], pts[0]); }
+      return pts;
+    }
+    function seg(x1, y1, x2, y2, n, o) {
+      o = o || {}; const pts = [];
+      for (let i = 0; i < n; i++) { const t = i / (n - 1); const x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t; pts.push([x, y]); D(x, y, o.s); }
+      if (o.link) for (let i = 0; i < pts.length - 1; i++) L(pts[i], pts[i + 1]);
+      return pts;
+    }
+    // 頭部輪廓（橢圓）
+    arc(60, 50, 34, 37, 0, 360, 26, { link: true, close: true, s: 1 });
+    // 兩側 / 後下方頭髮（頂部留空 = 禿頂高額）
+    arc(60, 52, 38.5, 40, 118, 242, 9, { s: 1.15 });
+    arc(60, 52, 38.5, 40, -62, 62, 9, { s: 1.15 });
+    // 眼鏡兩鏡片 + 鏡橋 + 鏡腳
+    arc(47, 53, 10, 9, 0, 360, 11, { link: true, close: true, s: .85 });
+    arc(73, 53, 10, 9, 0, 360, 11, { link: true, close: true, s: .85 });
+    seg(57, 53, 63, 53, 2, { s: .7, link: true });
+    seg(37, 53, 30, 51, 2, { s: .7, link: true });
+    seg(83, 53, 90, 51, 2, { s: .7, link: true });
+    // 眼睛 / 眉 / 鼻
+    D(47, 54, 1.5); D(73, 54, 1.5);
+    seg(40, 41, 54, 42, 3, { s: .7 }); seg(66, 42, 80, 41, 3, { s: .7 });
+    seg(60, 58, 60, 65, 2, { s: .7 });
+    // 微笑（下弧）
+    arc(60, 66, 13, 11, 30, 150, 7, { link: true, s: .9 });
+    // 耳
+    D(27, 54, 1.2); D(93, 54, 1.2);
+    // 脖子 + V 領
+    seg(54, 87, 54, 95, 2, { s: .8, link: true }); seg(66, 87, 66, 95, 2, { s: .8, link: true });
+    seg(54, 95, 60, 104, 3, { s: .9, link: true }); seg(66, 95, 60, 104, 3, { s: .9, link: true });
+    // 肩 + chibi 小身體輪廓
+    arc(60, 109, 26, 8, 180, 360, 9, { s: 1, link: true });
+    seg(36, 109, 41, 148, 8, { s: 1, link: true });
+    seg(84, 109, 79, 148, 8, { s: 1, link: true });
+    seg(41, 148, 79, 148, 7, { s: 1, link: true });
+    return { dots, lines };
+  }
+  function figureSVG() {
+    const f = genFigure();
+    const ln = f.lines.map(l => '<line x1="' + l[0] + '" y1="' + l[1] + '" x2="' + l[2] + '" y2="' + l[3] + '"/>').join("");
+    const dt = f.dots.map((d, i) =>
+      '<circle cx="' + d[0] + '" cy="' + d[1] + '" r="' + (1.5 * d[2]).toFixed(2) +
+      '" style="--d:' + ((i % 13) * 0.26).toFixed(2) + 's"/>').join("");
+    return '<svg class="spirit-fig" viewBox="0 0 120 156" aria-hidden="true">' +
+      '<defs><filter id="figGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6"/></filter></defs>' +
+      '<ellipse class="fig-aura" cx="60" cy="64" rx="40" ry="60" filter="url(#figGlow)"/>' +
+      '<g class="fig-lines">' + ln + '</g>' +
+      '<g class="fig-dots">' + dt + '</g>' +
+      '</svg>';
+  }
+
   // ---------- 建立 DOM ----------
   function build() {
     root = document.createElement("div");
@@ -28,10 +95,7 @@
     root.innerHTML =
       '<div class="spirit-bubble" role="status" aria-live="polite">' +
         '<span class="sb-text"></span><span class="sb-attr"></span></div>' +
-      '<div class="spirit-wisp" role="img">' +
-        '<span class="sw-halo"></span><span class="sw-core"></span>' +
-        '<i class="sw-spark s1"></i><i class="sw-spark s2"></i><i class="sw-spark s3"></i>' +
-      '</div>' +
+      '<div class="spirit-wisp" role="img">' + figureSVG() + '</div>' +
       '<div class="spirit-name">E. Witten</div>';
     document.body.appendChild(root);
     wisp = root.querySelector(".spirit-wisp");
@@ -64,9 +128,9 @@
   function orientBubble(p) {
     // 靠近頂端 → 氣泡往下開；用 flip-y 切換尾巴方向
     bubble.classList.toggle("flip-y", p.y < 150);
-    // 水平夾擠：氣泡置中於光靈，但別超出視窗左右邊界（光靈中心約 +31px）
+    // 水平夾擠：氣泡置中於光靈，但別超出視窗左右邊界（光靈中心約 +50px）
     const half = (bubble.offsetWidth || 282) / 2;
-    const wispCx = p.x + 31;
+    const wispCx = p.x + 50;
     const center = Math.max(half + 8, Math.min(wispCx, innerWidth - half - 8));
     bubble.style.left = (center - p.x) + "px";
   }
