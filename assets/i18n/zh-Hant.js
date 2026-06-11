@@ -22,6 +22,20 @@ window.I18N["zh-Hant"] = {
     footer: "視覺化 · Type III von Neumann Algebras & Emergent Spacetime · 內容整理自 Witten et al. 2022–2025"
   },
 
+  // 「Witten 英靈」浮游與名言（spirit.js 讀取；皆為有出處的真實引言）
+  spirit: {
+    label: "英靈",
+    on: "開", off: "關",
+    aria: "Edward Witten 英靈",
+    quotes: [
+      { text: "對弦論的正確理解，很可能會讓時空連續體就此消融。", attr: "E. Witten · NYT Magazine, 1987" },
+      { text: "弦論從頭到尾都是個奇蹟。", attr: "E. Witten · NYT Magazine, 1987" },
+      { text: "我不認為有哪個物理學家聰明到能刻意發明弦論——幸好，它是被意外發現的。", attr: "E. Witten · NYT Magazine, 1987" },
+      { text: "弦論極具吸引力，因為重力是被它強加給我們的。", attr: "E. Witten · Kaku, Hyperspace, 1995" },
+      { text: "真正能以最大的普遍性與最大的簡潔描述自然的方程式，都既優雅又微妙。", attr: "E. Witten · NOVA, 2003" }
+    ]
+  },
+
   hero: {
     eyebrow: "Witten et al. · 2022–2025 · 量子重力 × 算符代數",
     h1: '從 <span class="grad">一個觀測者的代數</span><br/>湧現出時間、空間、熱與質量',

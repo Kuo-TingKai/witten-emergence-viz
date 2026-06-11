@@ -55,6 +55,15 @@
 - 修掉三個 3D carousel 通病：①側卡 2D 投影攔截中央點擊 → 僅 `.is-front` 給 `pointer-events:auto`；②`pointerdown` 立即 `setPointerCapture` 吃掉 click → 改成偵測到實際拖動後才 capture；③Escape 同時關 modal 又退出展廳 → 展廳 keydown 改 capture 階段，modal 開著時放手。
 - 驗證：Playwright 實測桌機 + 390px 手機（旋轉、開 modal、切語言重建、Escape 兩段行為、RWD 圓點避開底部切換器）。
 
+### M6 — Witten 英靈（半透明金色光靈 + 名言浮游）✅
+- 半透明金色光靈 wisp（核心 + 光暈 + 三顆軌道粒子，純 CSS/SVG）在視窗內 `transform:translate` 漂移，抵達落點停下顯示一句名言，7s 後淡出再移動；點光靈本體可立即換下一句。
+- 名言為**查證有出處的真實引言**（i18n `spirit.quotes`，含 text + attr，隨語言切換）：NYT 1987「時空連續體消融」「弦論是個奇蹟」「意外被發現」、Kaku Hyperspace 1995「重力被強加給我們」、NOVA 2003「方程式優雅而微妙」。
+- 開關 bar（sparkles 圖示 + 開/關）注入既有 `#switchers`，存 `localStorage`（`witten-spirit`，預設開）；捲動 + 展廳兩種模式都出現。
+- `z-index:55`（展廳 40 之上、切換器 60 / modal 100 之下）；容器 `pointer-events:none` 不擋內容，只光靈本體可點。
+- 名言氣泡：靠頂端 `flip-y` 改向下開、靠左右邊界水平夾擠（`orientBubble`）避免裁切；尊重 `prefers-reduced-motion`（停漂移與脈動）。
+- 新增 `assets/spirit.js` + `assets/spirit.css`；`i18n/{zh-Hant,en}.js` 加 `spirit` 區塊；`index.html` 掛載兩檔。
+- 驗證：Playwright 桌機 / 700px / 展廳模式（漂移、名言、開關持久化、氣泡邊界夾擠、z 層級）。
+
 ## Fallback 指引
 - Rollback 到某 milestone：`git log --oneline` 找 `Mn:` commit，`git reset --hard <hash>`。
 - 關鍵檔案：`index.html`（結構）、`assets/style.css`（基底樣式）、`assets/gs-theme.css`（M2 主題，覆蓋層）、`assets/app.js`（M3 互動）、`assets/refs.js`（文獻）。

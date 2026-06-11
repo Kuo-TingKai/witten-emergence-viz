@@ -22,6 +22,20 @@ window.I18N["en"] = {
     footer: "Visualization · Type III von Neumann Algebras & Emergent Spacetime · compiled from Witten et al. 2022–2025"
   },
 
+  // Floating "Witten spirit" + quotes (read by spirit.js; all sourced, verbatim)
+  spirit: {
+    label: "Spirit",
+    on: "On", off: "Off",
+    aria: "Spirit of Edward Witten",
+    quotes: [
+      { text: "It is very possible that a proper understanding of string theory will make the space-time continuum melt away.", attr: "E. Witten · NYT Magazine, 1987" },
+      { text: "String theory is a miracle through and through.", attr: "E. Witten · NYT Magazine, 1987" },
+      { text: "I don't think any physicist would have been clever enough to invent string theory on purpose. Luckily, it was invented by accident.", attr: "E. Witten · NYT Magazine, 1987" },
+      { text: "String theory is extremely attractive because gravity is forced upon us.", attr: "E. Witten · Kaku, Hyperspace, 1995" },
+      { text: "The equations that really work in describing nature with the most generality and the greatest simplicity are very elegant and subtle.", attr: "E. Witten · NOVA, 2003" }
+    ]
+  },
+
   hero: {
     eyebrow: "Witten et al. · 2022–2025 · Quantum Gravity × Operator Algebras",
     h1: 'Out of <span class="grad">one observer’s algebra</span><br/>emerge time, space, heat, and mass',
