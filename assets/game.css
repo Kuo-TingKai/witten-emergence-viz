@@ -99,6 +99,14 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 }
 .bt-end:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 6px 24px rgba(212,175,55,.45); }
 .bt-end:disabled{ opacity:.35; cursor:default; filter:saturate(.4); }
+/* 規則「?」鈕 */
+.bt-help{
+  width:30px; height:30px; border-radius:999px; cursor:pointer; flex:none;
+  font-weight:800; font-size:.95rem; line-height:1; color:var(--gold);
+  background:rgba(28,23,13,.82); border:1px solid var(--line);
+  backdrop-filter:blur(8px); transition:.2s;
+}
+.bt-help:hover{ background:rgba(212,175,55,.18); transform:translateY(-1px); }
 /* 沒招可出：脈動提示「回合即將自動交給 Rovelli」 */
 .bt-end.idle{ animation:bt-end-idle 1s ease-in-out infinite; }
 @keyframes bt-end-idle{
@@ -388,6 +396,42 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 .fx-trap .fx-core, .fx-trap .fx-label{ color:#cbb0ff; text-shadow:0 0 14px rgba(150,110,255,.8); }
 .fx-summon .fx-ring{ border-color:#7fe6a8; box-shadow:0 0 34px rgba(120,230,160,.65); }
 .fx-summon .fx-core, .fx-summon .fx-label{ color:#9ff0bf; text-shadow:0 0 14px rgba(120,230,160,.8); }
+
+/* ---------- 規則說明（第一次進對戰自動彈 / ? 鈕重開） ---------- */
+.bt-rules{
+  position:fixed; inset:0; z-index:90;   /* 蓋過選單(60)與飛牌(70) */
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(5,4,2,.78); backdrop-filter:blur(7px);
+  padding:1rem; animation:bt-rules-in .3s ease;
+}
+@keyframes bt-rules-in{ from{ opacity:0; } to{ opacity:1; } }
+.brp-panel{
+  width:min(560px, 94vw); max-height:90vh; overflow:auto;
+  padding:1.8rem 2rem; border-radius:20px;
+  border:1px solid rgba(212,175,55,.4); background:var(--card);
+  box-shadow:0 30px 90px rgba(0,0,0,.6), 0 0 60px rgba(212,175,55,.15);
+}
+.brp-title{
+  font-size:1.5rem; font-weight:800; margin-bottom:.4rem;
+  background:linear-gradient(120deg,var(--copper),var(--gold) 50%,var(--champagne));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.brp-intro{ color:var(--muted); font-size:.92rem; line-height:1.7; margin-bottom:1.1rem; }
+.brp-list{ list-style:none; margin:0 0 1.4rem; padding:0; display:flex; flex-direction:column; gap:.8rem; }
+.brp-list li{ display:flex; align-items:flex-start; gap:.7rem; font-size:.88rem; line-height:1.6; color:var(--ink); }
+.brp-list svg{ width:20px; height:20px; color:var(--gold); flex:none; margin-top:2px; }
+.brp-start{
+  display:block; width:100%; padding:.7rem 1.4rem; border-radius:999px; cursor:pointer;
+  font-weight:800; font-size:.95rem; letter-spacing:.04em; color:#1a1408; border:none;
+  background:linear-gradient(120deg,var(--copper),var(--gold),var(--champagne));
+  box-shadow:0 6px 22px rgba(212,175,55,.35); transition:.2s;
+}
+.brp-start:hover{ transform:translateY(-1px); box-shadow:0 8px 28px rgba(212,175,55,.5); }
+@media (max-width:560px){
+  .brp-panel{ padding:1.4rem 1.2rem; }
+  .brp-title{ font-size:1.25rem; }
+  .brp-list li{ font-size:.82rem; }
+}
 
 /* ---------- RWD（M4 再細修，先保底） ---------- */
 @media (max-width:680px){

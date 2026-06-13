@@ -56,6 +56,20 @@ window.I18N["zh-Hant"] = {
     learnMore: "展開數學細節 →",
     taunt: "嘲諷", immune: "拓撲", sick: "凝聚中",
     vfxAttack: "攻擊", vfxDefense: "防禦", vfxMagic: "魔法", vfxTrap: "陷阱", vfxSummon: "召喚",
+    rules: {
+      title: "怎麼玩",
+      intro: "兩種量子重力綱領對撞：你（全像糾纏）對上 Carlo Rovelli（迴圈量子重力）。把對手的「時空完整度」打到 0 就獲勝。",
+      items: [
+        { icon: "heart-pulse", text: "雙方各 20 點時空完整度（HP）。先把對手打到 0 的一方獲勝。" },
+        { icon: "sparkles", text: "資源叫「糾纏」：每回合上限 +1（最多 10）、回合開始回滿，出牌要花糾纏。" },
+        { icon: "hand", text: "出牌：點手牌，卡會飛到牌桌中央並觸發特效。法術若需指定目標，先點牌再點目標（敵方單位或本體）。" },
+        { icon: "swords", text: "攻擊：點自己會發光的單位，再點敵方目標。剛召喚的單位要等下一回合才能行動；有「嘲諷」的單位必須先打。" },
+        { icon: "spline", text: "招牌機制「面積＝糾纏」：你場上相鄰單位形成金色連線，回合開始時本體護盾＝連線數。" },
+        { icon: "skip-forward", text: "沒招可出時會自動把回合交給 Rovelli（「結束回合」鈕會脈動）；也可隨時手動點「結束回合」。" },
+        { icon: "book-open", text: "機制即教學：每張卡都對應真實物理，出牌時浮出一句話解說，還能展開完整數學細節。" }
+      ],
+      start: "開始對戰"
+    },
     linkTip: "糾纏連線：回合開始時化作本體護盾（面積＝糾纏）",
     typeUnit: "單位", typeSpell: "法術", typeStruct: "結構",
     hint: "點手牌出牌 · 點自己的單位再點目標攻擊 · 回合開始時護盾＝相鄰單位的糾纏連線數（面積＝糾纏）",

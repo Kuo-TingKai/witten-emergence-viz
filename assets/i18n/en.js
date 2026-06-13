@@ -56,6 +56,20 @@ window.I18N["en"] = {
     learnMore: "Expand the math →",
     taunt: "Taunt", immune: "Topo", sick: "Condensing",
     vfxAttack: "Attack", vfxDefense: "Defense", vfxMagic: "Spell", vfxTrap: "Trap", vfxSummon: "Summon",
+    rules: {
+      title: "How to play",
+      intro: "Two quantum-gravity programs collide: you (holographic entanglement) vs Carlo Rovelli (Loop Quantum Gravity). Reduce your opponent’s spacetime integrity to 0 to win.",
+      items: [
+        { icon: "heart-pulse", text: "Both sides start at 20 spacetime integrity (HP). Drop your opponent to 0 to win." },
+        { icon: "sparkles", text: "Your resource is “entanglement”: +1 max per turn (up to 10), refilled each turn; cards cost entanglement." },
+        { icon: "hand", text: "Play a card by clicking it — it flies to the table with an effect. For a targeted spell, click the card then a target (an enemy unit or the hero)." },
+        { icon: "swords", text: "Attack by clicking one of your glowing units, then an enemy target. Freshly summoned units wait a turn; a unit with Taunt must be attacked first." },
+        { icon: "spline", text: "Signature rule “area = entanglement”: adjacent units form golden links; at the start of your turn your hero’s shield = the number of links." },
+        { icon: "skip-forward", text: "With no moves left, the turn auto-passes to Rovelli (the End-turn button pulses); you can also end your turn manually anytime." },
+        { icon: "book-open", text: "The mechanics are the lesson: every card maps to real physics — a one-line explainer pops up on play, and you can expand the full math." }
+      ],
+      start: "Start battle"
+    },
     linkTip: "Entanglement link: becomes your hero’s shield at the start of your turn (area = entanglement)",
     typeUnit: "Unit", typeSpell: "Spell", typeStruct: "Structure",
     hint: "Click a card to play it · click your unit then a target to attack · shield at turn start = entanglement links between adjacent units (area = entanglement)",

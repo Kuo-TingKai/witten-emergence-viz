@@ -568,6 +568,7 @@
         '<div class="bt-mid">' +
           '<div class="bt-turn"></div>' +
           '<button class="bt-end" type="button"></button>' +
+          '<button class="bt-help" type="button" aria-label="rules">?</button>' +
         '</div>' +
         '<div class="bt-row bt-row-p"></div>' +
       '</div>' +
@@ -582,6 +583,7 @@
 
     stage.querySelector(".bt-exit").addEventListener("click", exitGame);
     stage.querySelector(".bt-end").addEventListener("click", endTurn);
+    stage.querySelector(".bt-help").addEventListener("click", () => showRules());
 
     // 抽鬼牌式「抬牌」：滑鼠或手指滑過手牌時，指到的那張比其他牌高一截。
     // 用 pointermove + elementFromPoint 對滑鼠與觸控統一處理（手機可滑著看）。
@@ -617,6 +619,40 @@
     if (window.WittenView) window.WittenView.set("scroll");
   }
   function cancelPending() { pending = null; render(); }
+
+  // ---------- 規則說明（第一次進對戰自動彈、之後可由 ? 鈕重開） ----------
+  const RULES_KEY = "witten-battle-rules-seen";
+  let rulesSeenMem = false;
+  function rulesSeen() {
+    if (rulesSeenMem) return true;
+    try { return localStorage.getItem(RULES_KEY) === "1"; } catch (e) { return false; }
+  }
+  function markRulesSeen() {
+    rulesSeenMem = true;
+    try { localStorage.setItem(RULES_KEY, "1"); } catch (e) {}
+  }
+  // 顯示規則卡；關閉時記住「已看過」，之後不再自動彈（仍可由 ? 鈕重開）
+  function showRules() {
+    const r = gd().rules || {};
+    const old = document.getElementById("bt-rules");
+    if (old) old.remove();
+    const ov = document.createElement("div");
+    ov.id = "bt-rules"; ov.className = "bt-rules";
+    const items = (r.items || []).map(it =>
+      '<li><i data-lucide="' + (it.icon || "dot") + '"></i><span>' + (it.text || "") + '</span></li>').join("");
+    ov.innerHTML =
+      '<div class="brp-panel">' +
+        '<div class="brp-title">' + (r.title || "How to play") + '</div>' +
+        '<div class="brp-intro">' + (r.intro || "") + '</div>' +
+        '<ul class="brp-list">' + items + '</ul>' +
+        '<button class="brp-start" type="button">' + (r.start || "Start") + '</button>' +
+      '</div>';
+    document.body.appendChild(ov);
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+    const close = () => { ov.remove(); markRulesSeen(); };
+    ov.querySelector(".brp-start").addEventListener("click", close);
+    ov.addEventListener("click", e => { if (e.target === ov) close(); }); // 點背景關閉
+  }
 
   // ---------- 渲染 ----------
   function render() {
@@ -855,17 +891,21 @@
     document.body.classList.add("v-battle");
     active = true;
     render();
+    if (!rulesSeen()) showRules();   // 第一次進對戰自動彈規則說明
   }
   function leave() {
     document.body.classList.remove("v-battle");
     active = false;
-    // 清掉掛在 body 上、可能還在飛的出牌殘影
-    document.querySelectorAll(".bt-fly").forEach(el => el.remove());
+    // 清掉掛在 body 上的出牌殘影與規則卡
+    document.querySelectorAll(".bt-fly, #bt-rules").forEach(el => el.remove());
   }
   document.addEventListener("view:change", e => {
     if (e.detail && e.detail.view === "battle") enter(); else leave();
   });
 
-  // 語言 / 深度切換 → 重渲染文案
-  document.addEventListener("i18n:rendered", () => { if (built && active) render(); });
+  // 語言 / 深度切換 → 重渲染文案（規則卡若開著也跟著換語言）
+  document.addEventListener("i18n:rendered", () => {
+    if (built && active) render();
+    if (document.getElementById("bt-rules")) showRules();
+  });
 })();
