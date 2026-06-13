@@ -722,18 +722,20 @@
     const find = pred => playable.find(o => pred(DEFS[o.k], o.k));
     const readyAtk = me.field.filter(u => u.can && !u.sick && u.atk > 0);
     const atkSum = readyAtk.reduce((s, u) => s + u.atk, 0);
+    const bestAtk = readyAtk.slice().sort((x, y) => y.atk - x.atk)[0]; // 建議先點的攻擊單位（攻擊力最高）
     const foeTaunt = hasTaunt(foe);
     const bolt = find(d => d.fx === "bolt4");
 
     // 1) 斬殺：沒嘲諷且攻擊力（+bolt）足以打死 Carl
-    if (!foeTaunt && atkSum > 0 && atkSum >= foe.hp + foe.shield) return { kind: "attackFace", reason: a.lethal };
+    if (!foeTaunt && atkSum > 0 && atkSum >= foe.hp + foe.shield)
+      return { kind: "attackFace", attackerUnit: bestAtk, reason: a.lethal };
     if (!foeTaunt && bolt && atkSum + 4 >= foe.hp + foe.shield && foe.hp + foe.shield <= 4)
       return { kind: "play", handIdx: bolt.i, reason: a.lethalBolt };
-    // 2) 嘲諷牆擋路：bolt 轟掉，或提示用單位先清
+    // 2) 嘲諷牆擋路：bolt 轟掉，或叫玩家用單位先清（明確指出點哪個單位、打哪個牆）
     if (foeTaunt) {
       const wall = foe.field.filter(u => u.taunt).sort((x, y) => x.hp - y.hp)[0];
       if (bolt && wall && wall.hp <= 4) return { kind: "play", handIdx: bolt.i, targetUnit: wall, reason: a.clearTaunt };
-      if (readyAtk.length) return { kind: "attackTaunt", reason: a.attackTaunt };
+      if (readyAtk.length) return { kind: "attackTaunt", attackerUnit: bestAtk, targetUnit: wall, reason: a.attackTaunt };
     }
     // 3) 解掉 Carl 的大單位
     const threat = foe.field.filter(u => !u.immune && u.atk >= 3).sort((x, y) => y.atk - x.atk)[0];
@@ -752,7 +754,7 @@
     const sh = find(d => d.fx === "shieldUnits"); if (sh && me.field.length >= 2) return { kind: "play", handIdx: sh.i, reason: a.shield };
     const rc = find(d => d.fx === "reconstruct"); if (rc) return { kind: "play", handIdx: rc.i, reason: a.reconstruct };
     // 6) 還能打臉就打臉
-    if (readyAtk.length && !foeTaunt) return { kind: "attackFace", reason: a.attackFace };
+    if (readyAtk.length && !foeTaunt) return { kind: "attackFace", attackerUnit: bestAtk, reason: a.attackFace };
     // 7) 任何能出的牌
     if (playable.length) return { kind: "play", handIdx: playable[0].i, reason: a.play };
     // 8) 沒事可做 → 結束回合
@@ -831,6 +833,10 @@
       '</div>';
     // 本體作為攻擊 / 法術目標
     el.classList.toggle("targetable", isHeroTargetable(side));
+    // 教練建議攻擊本體、且玩家已選好攻擊單位 → 讓 Carl 頭像發光（第二步該點這）
+    const adviseHero = advisor && curAdvice && side === "e" && pending && pending.kind === "attack" &&
+                       curAdvice.kind === "attackFace" && validAttackTargets("p").hero;
+    el.classList.toggle("advise", !!adviseHero);
     el.onclick = () => onHeroClick(side);
   }
 
@@ -877,11 +883,19 @@
       const ready = side === "p" && G.cur === "p" && u.can && !u.sick && u.atk > 0 && !busy && !G.over;
       if (ready) el.classList.add("ready");
       if (pending && pending.kind === "attack" && side === "p" && pending.i === i) el.classList.add("selected");
-      // 教練建議：己方該攻擊的單位 / 敵方該被指定的目標 → 發光
-      if (advisor && curAdvice && !pending) {
-        if (side === "p" && ready && (curAdvice.kind === "attackFace" || curAdvice.kind === "attackTaunt")) el.classList.add("advise");
+      // 教練建議的發光指引：
+      //  · 還沒選單位時 → 讓「該點的己方攻擊單位」發光（第一步）
+      //  · 已選單位(pending attack)時 → 讓「該打的敵方目標」發光（第二步）
+      //  · 指定法術(pending spell)時 → 讓「該指定的敵方目標」發光
+      if (advisor && curAdvice) {
+        const atkAdvice = curAdvice.kind === "attackFace" || curAdvice.kind === "attackTaunt";
+        if (!pending && side === "p" && ready && atkAdvice && curAdvice.attackerUnit === u) el.classList.add("advise");
+        if (side === "e" && curAdvice.targetUnit === u) {
+          const spellOk = pending && pending.kind === "spell" && !u.immune;
+          const atkOk = pending && pending.kind === "attack" && validAttackTargets("p").units.includes(u);
+          if (spellOk || atkOk) el.classList.add("advise");
+        }
       }
-      if (advisor && curAdvice && curAdvice.targetUnit === u && pending && pending.kind === "spell") el.classList.add("advise");
       el.innerHTML =
         '<div class="bu-ico"><i data-lucide="' + DEFS[u.k].icon + '"></i></div>' +
         '<div class="bu-name">' + cardName(u.k) + '</div>' +

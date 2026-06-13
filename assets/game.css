@@ -279,8 +279,8 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
   border:6px solid transparent; border-top-color:var(--gold);
 }
-/* 教練建議攻擊 / 指定的目標單位：青金脈動光環 */
-.bt-unit.advise{ animation:bt-advise-u 1.1s ease-in-out infinite; }
+/* 教練建議攻擊 / 指定的目標單位或本體：金色脈動光環 */
+.bt-unit.advise, .bt-hero.advise{ animation:bt-advise-u 1.1s ease-in-out infinite; }
 @keyframes bt-advise-u{
   0%,100%{ box-shadow:0 0 0 2px rgba(212,175,55,.5), 0 0 14px rgba(212,175,55,.4); }
   50%{ box-shadow:0 0 0 3px rgba(212,175,55,.8), 0 0 26px rgba(212,175,55,.75); }
