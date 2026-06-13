@@ -14,7 +14,7 @@
   let stage, ring, faces = [], cards = [], idx = 0, N = 0, rotDeg = 0, step = 36;
 
   function readView() {
-    try { const v = localStorage.getItem(VIEW_STORE); if (v === "showcase" || v === "scroll") return v; } catch (e) {}
+    try { const v = localStorage.getItem(VIEW_STORE); if (v === "showcase" || v === "scroll" || v === "battle") return v; } catch (e) {}
     return "scroll";
   }
   function ui() {
@@ -218,15 +218,15 @@
   function setView(v) {
     view = v;
     try { localStorage.setItem(VIEW_STORE, v); } catch (e) {}
+    document.body.classList.toggle("v-showcase", v === "showcase");
     if (v === "showcase") {
       if (!built) build();
       buildFaces();                 // 反映當前語言 / 深度
       idx = 0; rotDeg = 0; applyRot(); setActive();
-      document.body.classList.add("v-showcase");
-    } else {
-      document.body.classList.remove("v-showcase");
     }
     syncViewBar();
+    // 第三方視圖（如 game.js 的對戰模式）監聽此事件自行顯示 / 隱藏
+    document.dispatchEvent(new CustomEvent("view:change", { detail: { view: v } }));
   }
 
   // ---------- 在既有 #switchers 注入「視圖」切換 bar ----------
@@ -239,7 +239,7 @@
       viewBar.className = "switch-bar sw-view";
       viewBar.setAttribute("role", "group");
       viewBar.innerHTML = '<span class="sw-label" data-role="view-label"></span>';
-      [["scroll"], ["showcase"]].forEach(([v]) => {
+      [["scroll"], ["showcase"], ["battle"]].forEach(([v]) => {
         const b = document.createElement("button");
         b.type = "button";
         b.dataset.view = v;
@@ -256,9 +256,9 @@
     const ll = viewBar.querySelector('[data-role="view-label"]');
     if (ll) ll.textContent = u.viewLabel || "View";
     viewBar.querySelectorAll("button").forEach(b => {
-      b.textContent = b.dataset.view === "scroll"
-        ? (u.viewScroll || "Scroll")
-        : (u.viewShowcase || "Gallery");
+      b.textContent = b.dataset.view === "scroll" ? (u.viewScroll || "Scroll")
+        : b.dataset.view === "showcase" ? (u.viewShowcase || "Gallery")
+        : (u.viewBattle || "Battle");
       b.classList.toggle("on", b.dataset.view === view);
     });
   }
@@ -272,11 +272,14 @@
     }
   });
 
-  // 首次：若記憶為展廳，等 i18n 第一次渲染後啟動
+  // 首次：若記憶為展廳 / 對戰，等 i18n 第一次渲染後啟動
   let firstRender = false;
   document.addEventListener("i18n:rendered", function once() {
     if (firstRender) return; firstRender = true;
     document.removeEventListener("i18n:rendered", once);
-    if (view === "showcase") setView("showcase");
+    if (view !== "scroll") setView(view);
   });
+
+  // 對外：讓其他視圖模組（game.js）能切換視圖
+  window.WittenView = { set: setView, get: function () { return view; } };
 })();

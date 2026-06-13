@@ -13,6 +13,7 @@ window.I18N["zh-Hant"] = {
     viewLabel: "視圖",
     viewScroll: "捲動",
     viewShowcase: "展廳",
+    viewBattle: "對戰",
     scHint: "拖曳・方向鍵・滾輪旋轉 · 點擊中央卡片展開數學細節",
     pro: "專業", hard: "硬科普", soft: "軟科普",
     scrollCue: "往下看推導 ↓",
@@ -34,6 +35,38 @@ window.I18N["zh-Hant"] = {
       { text: "弦論極具吸引力，因為重力是被它強加給我們的。", attr: "E. Witten · Kaku, Hyperspace, 1995" },
       { text: "真正能以最大的普遍性與最大的簡潔描述自然的方程式，都既優雅又微妙。", attr: "E. Witten · NOVA, 2003" }
     ]
+  },
+
+  // 概念對戰模式（game.js 讀取）—— 卡名沿用 card.<k>.title
+  game: {
+    you: "你", enemy: "對手",
+    integrity: "時空完整度",
+    shield: "糾纏護盾",
+    endTurn: "結束回合",
+    yourTurn: "你的回合",
+    enemyTurn: "對手回合",
+    win: "時空重建完成",
+    lose: "你的時空解體了",
+    winSub: "對手的視界失去支撐——糾纏網絡由你重新縫合。每一張你打出的卡，都是一個真實的物理機制。",
+    loseSub: "糾纏斷光，幾何散成一盤沙。換個策略再縫一次。",
+    restart: "再來一局",
+    exitGame: "離開對戰",
+    learnMore: "展開數學細節 →",
+    taunt: "嘲諷", immune: "拓撲", sick: "凝聚中",
+    typeUnit: "單位", typeSpell: "法術", typeStruct: "結構",
+    hint: "點手牌出牌 · 點自己的單位再點目標攻擊 · 回合開始時護盾＝相鄰單位的糾纏連線數（面積＝糾纏）",
+    cards: {
+      time:   { text: "抽 2 張牌。", flavor: "時間不是背景——是模流自己往前走，你的資訊隨之變多。" },
+      space:  { text: "入場時若你已有單位，獲得 +1/+1。", flavor: "空間是糾纏縫起來的：節點越多，縫得越緊。" },
+      heat:   { text: "對敵方所有單位與本體造成 2 點熵衰減。", flavor: "被視界擋住的資訊，以熱的形式回到你身上——霍金輻射。" },
+      energy: { text: "對任一目標造成 4 點傷害。", flavor: "能量是時空抵抗被改變的力道。" },
+      mass:   { text: "嘲諷：敵方必須先攻擊它。", flavor: "能量擠成一個結，時空被壓出缺陷——那就是質量。" },
+      rt:     { text: "獲得護盾＝2 × 你的場上單位數。", flavor: "面積＝糾纏熵：糾纏越多，幾何屏障越大（RT 公式）。" },
+      jlms:   { text: "從你的棄牌堆隨機重構 1 張卡回到手牌。", flavor: "局部毀損不要緊——糾錯碼能從剩餘部分完整重構（JLMS）。" },
+      tqft:   { text: "拓撲免疫：不受法術與熵傷害，只能被單位攻擊。", flavor: "拓撲算子怎麼拉扯都不變——邏輯位元對局部噪聲免疫。" },
+      happy:  { text: "結構：你的本體受到的傷害 −1。", flavor: "HaPPY 張量網絡：容錯是宇宙內建的存檔方式。" },
+      cs:     { text: "接下來你的 3 個回合開始時，對敵方本體造成 2 點傷害。無法被移除。", flavor: "手徵流受拓撲保護：單向流動、不被打亂（Chern–Simons）。" }
+    }
   },
 
   hero: {
