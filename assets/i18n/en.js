@@ -13,6 +13,7 @@ window.I18N["en"] = {
     viewLabel: "View",
     viewScroll: "Scroll",
     viewShowcase: "Gallery",
+    viewBattle: "Battle",
     scHint: "Drag · arrow keys · wheel to rotate · click the center card for the math",
     pro: "Expert", hard: "Science", soft: "Plain",
     scrollCue: "Scroll for the derivation ↓",
@@ -34,6 +35,39 @@ window.I18N["en"] = {
       { text: "String theory is extremely attractive because gravity is forced upon us.", attr: "E. Witten · Kaku, Hyperspace, 1995" },
       { text: "The equations that really work in describing nature with the most generality and the greatest simplicity are very elegant and subtle.", attr: "E. Witten · NOVA, 2003" }
     ]
+  },
+
+  // Concept-battle mode (read by game.js) — card names reuse card.<k>.title
+  game: {
+    you: "You", enemy: "Opponent",
+    integrity: "Spacetime integrity",
+    shield: "Entanglement shield",
+    endTurn: "End turn",
+    yourTurn: "Your turn",
+    enemyTurn: "Opponent’s turn",
+    win: "Spacetime rebuilt",
+    lose: "Your spacetime dissolved",
+    winSub: "The opponent’s horizon lost its support — you re-stitched the entanglement network. Every card you played is a real physical mechanism.",
+    loseSub: "Entanglement severed, geometry scattered into sand. Try a different strategy and stitch it back.",
+    restart: "Play again",
+    exitGame: "Leave battle",
+    learnMore: "Expand the math →",
+    taunt: "Taunt", immune: "Topo", sick: "Condensing",
+    linkTip: "Entanglement link: becomes your hero’s shield at the start of your turn (area = entanglement)",
+    typeUnit: "Unit", typeSpell: "Spell", typeStruct: "Structure",
+    hint: "Click a card to play it · click your unit then a target to attack · shield at turn start = entanglement links between adjacent units (area = entanglement)",
+    cards: {
+      time:   { text: "Draw 2 cards.", flavor: "Time isn’t a backdrop — it’s modular flow moving forward on its own, and your information grows with it." },
+      space:  { text: "On play, if you already control a unit, gain +1/+1.", flavor: "Space is stitched out of entanglement: more nodes, tighter weave." },
+      heat:   { text: "Deal 2 entropy damage to all enemy units and the enemy hero.", flavor: "Information hidden behind a horizon returns to you as heat — Hawking radiation." },
+      energy: { text: "Deal 4 damage to any target.", flavor: "Energy is how strongly spacetime resists being changed." },
+      mass:   { text: "Taunt: enemies must attack it first.", flavor: "Energy tied into a knot dents spacetime — that’s mass." },
+      rt:     { text: "Gain shield = 2 × the number of units you control.", flavor: "Area = entanglement entropy: more entanglement, bigger geometric barrier (RT formula)." },
+      jlms:   { text: "Reconstruct a random card from your discard pile back to your hand.", flavor: "Local damage is fine — an error-correcting code reconstructs from what remains (JLMS)." },
+      tqft:   { text: "Topological immunity: unaffected by spells and entropy; can only be attacked by units.", flavor: "A topological operator is invariant under deformation — a logical qubit immune to local noise." },
+      happy:  { text: "Structure: damage to your hero is reduced by 1.", flavor: "The HaPPY tensor network: fault tolerance is how the universe stores its save file." },
+      cs:     { text: "At the start of your next 3 turns, deal 2 damage to the enemy hero. Cannot be removed.", flavor: "A chiral current under topological protection: one-way flow that can’t be disrupted (Chern–Simons)." }
+    }
   },
 
   hero: {

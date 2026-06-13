@@ -324,9 +324,32 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   .bt-unit{ width:78px; }
   .bu-name{ font-size:.6rem; }
   .bt-hintbar{ display:none; }
-  .bt-ticker{ left:50%; transform:translate(-50%,10px); bottom:auto; top:76px; }
+  .bt-ticker{ left:50%; transform:translate(-50%,10px); bottom:auto; top:120px; }
   .bt-ticker.show{ transform:translate(-50%,0); }
   .bt-link{ width:14px; }
+}
+
+/* 手機：全域切換器在 ≤560px 會移到「底部置中」，會壓到玩家手牌。
+   對戰模式改回頂部置中（緊湊、可換行），戰場內容整體下推讓出空間。 */
+@media (max-width:560px){
+  body.v-battle #switchers{
+    top:8px; bottom:auto; right:50%; transform:translateX(50%);
+    max-width:78vw;     /* 左側留給 ✕ 離開鈕 */
+  }
+  body.v-battle #switchers{ gap:.22rem; }
+  body.v-battle #switchers .switch-bar{ padding:.16rem; }
+  body.v-battle #switchers .switch-bar button{ font-size:.66rem; padding:.26rem .46rem; }
+  /* 切換器在頂部置中、最多 ~3 行；戰場內容整體下推讓出空間 */
+  #battle{ padding-top:152px; }
+  .bt-exit{ top:10px; left:10px; width:34px; height:34px; font-size:.9rem; }
+  .bt-enemy{ min-height:54px; }
+  .bt-ehand{ display:none; }     /* 手機空間有限，省略對手牌背 */
+  .bt-card{ width:88px; height:124px; margin:0 -22px; }
+  .bt-card .bc-text{ font-size:.56rem; }
+  .bt-unit{ width:66px; padding:.35rem .3rem; }
+  .bu-ico svg{ width:18px; height:18px; }
+  .bt-row{ min-height:80px; gap:.3rem; }
+  .bt-ticker{ width:86vw; top:108px; }
 }
 
 @media (prefers-reduced-motion:reduce){
