@@ -166,7 +166,7 @@
     if (d.type === "unit") {
       const u = { k, atk: d.atk, hp: d.hp, maxhp: d.hp,
                   taunt: !!d.taunt, immune: !!d.immune, structure: !!d.structure,
-                  sick: true, can: false };
+                  sick: true, can: false, fresh: true };
       pl.field.push(u);
       // 空間：入場時若已有其他單位 → 糾纏增強 +1/+1（單位死亡時才進棄牌堆）
       if (k === "space" && pl.field.length > 1) { u.atk++; u.hp++; u.maxhp++; }
@@ -230,6 +230,47 @@
     tickerT = setTimeout(() => el.classList.remove("show"), 8000);
   }
 
+  // ---------- 動畫（純 CSS class 觸發；尊重 reduced-motion） ----------
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function unitEl(side, unit) {
+    const pl = own(side);
+    const i = pl.field.indexOf(unit);
+    if (i < 0) return null;
+    return stage.querySelector((side === "p" ? ".bt-row-p" : ".bt-row-e") + " .bt-unit:nth-child(" + (i * 2 + 1) + ")");
+  }
+  function heroEl(side) { return stage.querySelector('.bt-hero[data-side="' + side + '"]'); }
+
+  // 攻擊突刺：攻擊者朝目標位移再彈回，命中時目標抖動 + 飄傷害數字
+  async function animAttack(side, attacker, target) {
+    if (reduceMotion || !built) return;
+    const aEl = unitEl(side, attacker);
+    const tEl = target.unit ? unitEl(side === "p" ? "e" : "p", target.unit) : heroEl(side === "p" ? "e" : "p");
+    if (!aEl || !tEl) return;
+    const a = aEl.getBoundingClientRect(), t = tEl.getBoundingClientRect();
+    const dx = (t.left + t.width / 2) - (a.left + a.width / 2);
+    const dy = (t.top + t.height / 2) - (a.top + a.height / 2);
+    aEl.style.transition = "transform .16s cubic-bezier(.5,0,.9,.5)";
+    aEl.style.transform = "translate(" + (dx * 0.55) + "px," + (dy * 0.55) + "px) scale(1.08)";
+    aEl.style.zIndex = "7";
+    await sleep(165);
+    tEl.classList.add("bt-hit");
+    floatDmg(tEl, attacker.atk);
+    if (target.unit && attacker.atk > 0 && target.unit.atk > 0) floatDmg(aEl, target.unit.atk);
+    await sleep(150);
+    aEl.style.transition = "transform .22s ease";
+    aEl.style.transform = "";
+    setTimeout(() => { tEl.classList.remove("bt-hit"); if (aEl) aEl.style.zIndex = ""; }, 320);
+    await sleep(220);
+  }
+  function floatDmg(el, n) {
+    if (!el || !n) return;
+    const d = document.createElement("div");
+    d.className = "bt-dmg";
+    d.textContent = "-" + n;
+    el.appendChild(d);
+    setTimeout(() => d.remove(), 900);
+  }
+
   // ---------- 攻擊 ----------
   function validAttackTargets(side) {
     const en = opp(side);
@@ -268,18 +309,51 @@
       render();
       await sleep(700);
     }
-    // 攻擊：遵守嘲諷；其餘打臉（M3 強化交換判斷）
-    for (const u of e.field.slice()) {
-      if (G.over) break;
-      if (!u.can || u.sick || u.atk === 0) continue;
-      const v = validAttackTargets("e");
-      if (v.units.length && !v.hero) attack("e", u, { unit: v.units[0] });
-      else attack("e", u, {});
+    // 攻擊（M3 強化）：斬殺優先 → 嘲諷必清 → 划算交換 → 否則打臉
+    let aguard = 20;
+    while (!G.over && aguard-- > 0) {
+      const attackers = e.field.filter(u => u.can && !u.sick && u.atk > 0);
+      if (!attackers.length) break;
+      const tgt = aiChooseAttack(attackers);
+      if (!tgt) break;
+      await animAttack("e", tgt.attacker, tgt.target);
+      attack("e", tgt.attacker, tgt.target);
       render();
-      await sleep(520);
+      await sleep(420);
     }
     busy = false;
     if (!G.over) endTurn(); else render();
+  }
+
+  // 回傳 {attacker, target:{unit}|{}}；無合理攻擊回 null
+  function aiChooseAttack(attackers) {
+    const v = validAttackTargets("e");
+    // 1) 斬殺：可用攻擊力總和 ≥ 玩家 hp+shield 且場上沒嘲諷 → 全部打臉
+    if (v.hero) {
+      const total = attackers.reduce((s, u) => s + u.atk, 0);
+      if (total >= G.p.hp + G.p.shield) {
+        return { attacker: attackers[0], target: {} };
+      }
+    }
+    // 2) 嘲諷牆：必須先清；挑「能打死且自己活下來」最划算的攻擊者
+    if (!v.hero && v.units.length) {
+      const wall = v.units.slice().sort((a, b) => a.hp - b.hp)[0];
+      const killer = attackers.find(u => u.atk >= wall.hp && u.hp > wall.atk) ||
+                     attackers.find(u => u.atk >= wall.hp) || attackers[0];
+      return { attacker: killer, target: { unit: wall } };
+    }
+    // 3) 划算交換：用攻擊者解掉「能殺死、且交換不虧」的敵方單位
+    for (const u of attackers) {
+      const trades = v.units
+        .filter(t => u.atk >= t.hp && (u.hp > t.atk || t.atk >= 3))  // 殺得死且不血虧 / 對方威脅大
+        .sort((a, b) => (b.atk + b.hp) - (a.atk + a.hp));
+      if (trades.length) return { attacker: u, target: { unit: trades[0] } };
+    }
+    // 4) 否則打臉（沒嘲諷時）
+    if (v.hero) return { attacker: attackers[0], target: {} };
+    // 只能換不划算的牆
+    if (v.units.length) return { attacker: attackers[0], target: { unit: v.units[0] } };
+    return null;
   }
   function aiPick() {
     const e = G.e;
@@ -419,9 +493,17 @@
       pending = null; render();
     } else if (pending.kind === "attack" && validAttackTargets("p").hero) {
       const u = G.p.field[pending.i];
-      if (u) attack("p", u, {});
-      pending = null; render();
+      pending = null;
+      if (u) doPlayerAttack(u, {});
+      else render();
     }
+  }
+
+  async function doPlayerAttack(attacker, target) {
+    busy = true; render();
+    await animAttack("p", attacker, target);
+    attack("p", attacker, target);
+    busy = false; render();
   }
 
   function badge(cls, txt) { return '<span class="bu-badge ' + cls + '">' + txt + '</span>'; }
@@ -438,6 +520,7 @@
       if (u.immune) el.classList.add("is-immune");
       if (u.structure) el.classList.add("is-structure");
       if (u.sick) el.classList.add("is-sick");
+      if (u.fresh) { el.classList.add("bt-enter"); u.fresh = false; }
       const ready = side === "p" && G.cur === "p" && u.can && !u.sick && u.atk > 0 && !busy && !G.over;
       if (ready) el.classList.add("ready");
       if (pending && pending.kind === "attack" && side === "p" && pending.i === i) el.classList.add("selected");
@@ -491,8 +574,9 @@
         const v = validAttackTargets("p");
         if (!v.units.includes(u)) return;
         const a = G.p.field[pending.i];
-        if (a) attack("p", a, { unit: u });
-        pending = null; render();
+        pending = null;
+        if (a) doPlayerAttack(a, { unit: u });
+        else render();
       }
     }
   }
@@ -560,10 +644,14 @@
     const el = stage.querySelector(".bt-result");
     if (!G.over) { el.classList.remove("show"); el.innerHTML = ""; return; }
     const win = G.winner === "p";
+    // 結算附一句 Witten 名言（沿用 spirit 字典；無則略）
+    const qs = (dict().spirit && dict().spirit.quotes) || [];
+    const q = qs.length ? qs[G.p.turns % qs.length] : null;
     el.innerHTML =
       '<div class="br-box">' +
         '<div class="br-title">' + (win ? (g.win || "Win") : (g.lose || "Lose")) + '</div>' +
         '<div class="br-sub">' + (win ? (g.winSub || "") : (g.loseSub || "")) + '</div>' +
+        (q ? '<blockquote class="br-quote">“' + q.text + '”<cite>— ' + (q.attr || "") + '</cite></blockquote>' : "") +
         '<div class="br-actions">' +
           '<button class="br-restart" type="button">' + (g.restart || "Restart") + '</button>' +
           '<button class="br-exit" type="button">' + (g.exitGame || "Exit") + '</button>' +

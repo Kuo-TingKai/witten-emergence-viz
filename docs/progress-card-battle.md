@@ -77,3 +77,16 @@ JLMS 糾錯 → 從棄牌堆重構、TQFT 拓撲 → 免疫法術…），出牌
 - zh `game.linkTip`；ticker / link RWD（手機 ticker 移到頂部）。
 - 驗證：headless 7 回合，ticker 每次出牌皆顯示、modal 成功開啟（標題正確）、
   玩家連線數達 2、0 JS 錯誤。
+
+## M3 — AI 決策強化 + 3D 動畫 + 結算名言
+
+- AI 攻擊重寫 `aiChooseAttack`：斬殺偵測（攻擊力總和 ≥ 玩家 hp+shield 且無嘲諷 → 全員打臉）
+  → 嘲諷牆優先清（挑能殺死且自己存活的攻擊者）→ 划算交換（殺得死且不血虧 / 對方威脅大）
+  → 否則打臉。出牌 `aiPick` 沿用優先序。
+- 動畫（尊重 prefers-reduced-motion）：
+  - `animAttack` 攻擊突刺（朝目標位移 55% 再彈回），雙方 attack 路徑共用。
+  - `bt-hit` 受擊抖動 + 紅閃；`floatDmg` 飄傷害數字。
+  - 單位入場 `bt-enter`（fresh 旗標，凝聚浮現）。
+- 結算畫面加一句 Witten 名言（沿用 spirit.quotes，依回合數選句）。
+- 驗證：headless 跑到分出勝負（10 回合），入場/受擊/傷害數字動畫皆觸發、
+  結算名言正確顯示、0 JS 錯誤。
