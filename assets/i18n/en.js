@@ -82,7 +82,7 @@ window.I18N["en"] = {
       rt:     { text: "Gain shield = 2 × the number of units you control.", flavor: "Area = entanglement entropy: more entanglement, bigger geometric barrier (RT formula)." },
       jlms:   { text: "Reconstruct a random card from your discard pile back to your hand.", flavor: "Local damage is fine — an error-correcting code reconstructs from what remains (JLMS)." },
       tqft:   { text: "Topological immunity: unaffected by spells and entropy; can only be attacked by units.", flavor: "A topological operator is invariant under deformation — a logical qubit immune to local noise." },
-      happy:  { text: "Structure: damage to your hero is reduced by 1.", flavor: "The HaPPY tensor network: fault tolerance is how the universe stores its save file." },
+      happy:  { text: "Structure: spell & entropy damage to your hero is reduced by 1 (doesn’t stop unit attacks).", flavor: "The HaPPY tensor network: fault tolerance is how the universe stores its save file." },
       cs:     { text: "At the start of your next 3 turns, deal 2 damage to the enemy hero. Cannot be removed.", flavor: "A chiral current under topological protection: one-way flow that can’t be disrupted (Chern–Simons)." },
       // ---- Carlo Rovelli’s Loop Quantum Gravity deck ----
       lqg_holonomy:    { name: "Holonomy", text: "Draw 2 cards.", flavor: "Parallel-transport around a closed loop and what you read off is the loop variable — the namesake of Loop Quantum Gravity." },
@@ -93,7 +93,7 @@ window.I18N["en"] = {
       lqg_area:        { name: "Area quantization", text: "Gain shield = 2 × the number of units you control.", flavor: "Area takes only discrete eigenvalues √(j(j+1)) — quantized area piles up into a geometric barrier." },
       lqg_bounce:      { name: "Big Bounce", text: "Reconstruct a random card from your discard pile back to your hand.", flavor: "Loop quantum cosmology replaces the Big Bang singularity with a bounce — what got crushed comes back from the other side." },
       lqg_diffeo:      { name: "Diffeomorphism invariance", text: "Topological immunity: unaffected by spells and decay; can only be attacked by units.", flavor: "Physics only sees gauge-equivalence classes — what’s invariant under any change of coordinates, a spell can’t touch." },
-      lqg_planck:      { name: "Planck discreteness", text: "Structure: damage to your hero is reduced by 1.", flavor: "There is a minimum length; spacetime is discrete at the Planck scale — damage can’t cut below the floor." },
+      lqg_planck:      { name: "Planck discreteness", text: "Structure: spell & entropy damage to your hero is reduced by 1 (doesn’t stop unit attacks).", flavor: "There is a minimum length; spacetime is discrete at the Planck scale — damage can’t cut below the floor." },
       lqg_immirzi:     { name: "Immirzi parameter γ", text: "At the start of your next 3 turns, deal 2 damage to the enemy hero. Cannot be removed.", flavor: "γ fixes the scale of the area gap — quanta of Planck area press in, one unit at a time." }
     }
   },

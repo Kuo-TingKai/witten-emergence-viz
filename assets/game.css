@@ -56,6 +56,18 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   background:rgba(212,175,55,.08); flex:none;
 }
 .bh-portrait svg{ width:26px; height:26px; }
+/* Carl Rovelli 的 Q 版粒子頭像（仿 Witten 英靈：發光粒子 + 淡金連線） */
+.bh-rovelli{ overflow:visible; }
+.bh-rovelli .rovelli-fig{ width:42px; height:42px; overflow:visible; }
+.rf-lines line{ stroke:rgba(212,175,55,.32); stroke-width:.9; }
+.rf-dots circle{
+  fill:var(--champagne);
+  transform-box:fill-box; transform-origin:center;
+  filter:drop-shadow(0 0 1.5px rgba(240,217,138,.9));
+  animation:rf-spark 3s ease-in-out infinite; animation-delay:var(--d,0s);
+}
+@keyframes rf-spark{ 0%,100%{ opacity:.5; transform:scale(.85); } 50%{ opacity:1; transform:scale(1.15); } }
+@media (prefers-reduced-motion:reduce){ .rf-dots circle{ animation:none; opacity:.85; } }
 .bh-name{ font-weight:700; font-size:.92rem; }
 .bh-faction{
   display:block; font-weight:600; font-size:.6rem; letter-spacing:.06em;
@@ -243,7 +255,7 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 .bc-stats{ font-size:.78rem; font-weight:800; color:var(--champagne); }
 
 /* 對手手牌（牌背） */
-.bt-ehand{ display:flex; }
+.bt-ehand{ display:flex; pointer-events:none; }   /* 牌背純裝飾，不可擋到 Carl 本體的點擊 */
 .bt-back{
   width:34px; height:48px; margin:0 -7px; border-radius:6px;
   border:1px solid rgba(212,175,55,.35);

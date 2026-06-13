@@ -153,8 +153,9 @@
   function dmgHero(side, n, o) {
     const pl = own(side);
     o = o || {};
-    // 結構容錯（HaPPY 碼 / 普朗克離散）：本體受傷 -1
-    if (!o.noHappy && hasStructure(pl) && n > 0) n = Math.max(0, n - 1);
+    // 結構容錯（HaPPY 碼 / 普朗克離散）只擋「軟」傷害（法術 / 熵 = 噪聲），
+    // 擋不住單位直接攻擊（邏輯算子照樣打進來）→ 所以清掉嘲諷後單位能穩定扣本體血。
+    if (o.soft && hasStructure(pl) && n > 0) n = Math.max(0, n - 1);
     const absorbed = Math.min(pl.shield, n);
     pl.shield -= absorbed;
     pl.hp -= (n - absorbed);
@@ -212,13 +213,13 @@
       switch (d.fx) {
         case "draw2":       // 模流推進 / 和樂圈：抽 2
           draw(pl); draw(pl); break;
-        case "aoe2":        // 霍金輻射 / 自旋泡沫：敵全場 2 點衰減（免疫擋法術）
+        case "aoe2":        // 霍金輻射 / 自旋泡沫：敵全場 2 點衰減（軟傷害，免疫/結構可擋）
           en.field.slice().forEach(u => dmgUnit(enSide, u, 2, { spell: true }));
-          dmgHero(enSide, 2);
+          dmgHero(enSide, 2, { soft: true });
           break;
-        case "bolt4":       // 能量 / 哈密頓約束：指定目標 4 傷害
+        case "bolt4":       // 能量 / 哈密頓約束：指定目標 4 傷害（軟傷害）
           if (target && target.unit) dmgUnit(enSide, target.unit, 4, { spell: true });
-          else dmgHero(enSide, 4);
+          else dmgHero(enSide, 4, { soft: true });
           break;
         case "shieldUnits": // 面積=糾纏 / 面積量子化：護盾 +2×單位數
           pl.shield += 2 * pl.field.length; break;
@@ -553,6 +554,48 @@
     return { hero: true };
   }
 
+  // ---------- Carl Rovelli 的 Q 版粒子頭像（仿 spirit.js 的發光粒子 + 淡金連線手法）----------
+  // 辨識特徵刻意和 Witten 區隔：滿頭波浪頭髮（非禿頂）、沒戴眼鏡、溫和微笑。viewBox 0 0 100 100。
+  function rovelliSVG() {
+    const dots = [], lines = [];
+    const D = (x, y, s) => dots.push([+x.toFixed(1), +y.toFixed(1), s || 1]);
+    const L = (a, b) => lines.push([+a[0].toFixed(1), +a[1].toFixed(1), +b[0].toFixed(1), +b[1].toFixed(1)]);
+    const rad = d => d * Math.PI / 180;
+    function arc(cx, cy, rx, ry, a0, a1, n, o) {
+      o = o || {}; const pts = [];
+      for (let i = 0; i < n; i++) {
+        const t = a0 + (a1 - a0) * (n === 1 ? 0 : i / (n - 1));
+        const x = cx + rx * Math.cos(rad(t)), y = cy + ry * Math.sin(rad(t));
+        pts.push([x, y]); D(x, y, o.s);
+      }
+      if (o.link) { for (let i = 0; i < pts.length - 1; i++) L(pts[i], pts[i + 1]); if (o.close) L(pts[pts.length - 1], pts[0]); }
+      return pts;
+    }
+    function seg(x1, y1, x2, y2, n, o) {
+      o = o || {}; const pts = [];
+      for (let i = 0; i < n; i++) { const t = n === 1 ? 0 : i / (n - 1); const x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t; pts.push([x, y]); D(x, y, o.s); }
+      if (o.link) for (let i = 0; i < pts.length - 1; i++) L(pts[i], pts[i + 1]);
+      return pts;
+    }
+    arc(50, 55, 26, 28, 0, 360, 22, { link: true, close: true, s: 1 });   // 臉部輪廓
+    arc(50, 52, 30, 31, 178, 362, 16, { s: 1.15 });                       // 滿頭頭髮（蓋過頭頂）
+    arc(50, 49, 27, 28, 192, 348, 11, { s: 1.0 });                        // 頭髮厚度第二層
+    arc(42, 39, 6, 5, 200, 340, 4, { s: .8, link: true });                // 左瀏海波浪
+    arc(58, 39, 6, 5, 200, 340, 4, { s: .8, link: true });                // 右瀏海波浪
+    seg(24, 50, 26, 63, 3, { s: 1 }); seg(76, 50, 74, 63, 3, { s: 1 });   // 兩側鬢髮
+    seg(36, 47, 45, 46, 3, { s: .7 }); seg(55, 46, 64, 47, 3, { s: .7 });  // 眉
+    D(42, 51, 1.6); D(58, 51, 1.6);                                       // 眼（無眼鏡，與 Witten 區隔）
+    seg(50, 54, 50, 61, 2, { s: .7 });                                    // 鼻
+    arc(50, 62, 11, 9, 30, 150, 7, { link: true, s: .9 });                // 微笑
+    D(22, 56, 1.1); D(78, 56, 1.1);                                       // 耳
+    const ln = lines.map(l => '<line x1="' + l[0] + '" y1="' + l[1] + '" x2="' + l[2] + '" y2="' + l[3] + '"/>').join("");
+    const dt = dots.map((d, i) =>
+      '<circle cx="' + d[0] + '" cy="' + d[1] + '" r="' + (1.5 * d[2]).toFixed(2) +
+      '" style="--d:' + ((i % 11) * 0.27).toFixed(2) + 's"/>').join("");
+    return '<svg class="rovelli-fig" viewBox="0 0 100 100" aria-hidden="true">' +
+      '<g class="rf-lines">' + ln + '</g><g class="rf-dots">' + dt + '</g></svg>';
+  }
+
   // ---------- DOM ----------
   function build() {
     stage = document.createElement("div");
@@ -689,7 +732,9 @@
     const name = side === "p" ? (g.you || "你") : (g.enemyName || g.enemy || "對手");
     const sub = side === "p" ? (g.youFaction || "") : (g.enemyFaction || "");
     el.innerHTML =
-      '<div class="bh-portrait"><i data-lucide="' + (side === "p" ? "user-round" : "orbit") + '"></i></div>' +
+      '<div class="bh-portrait' + (side === "e" ? " bh-rovelli" : "") + '">' +
+        (side === "p" ? '<i data-lucide="user-round"></i>' : rovelliSVG()) +
+      '</div>' +
       '<div class="bh-info">' +
         '<div class="bh-name">' + name + (sub ? '<span class="bh-faction">' + sub + '</span>' : "") + '</div>' +
         '<div class="bh-stats">' +
