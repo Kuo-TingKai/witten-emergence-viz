@@ -111,14 +111,16 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 }
 .bt-end:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 6px 24px rgba(212,175,55,.45); }
 .bt-end:disabled{ opacity:.35; cursor:default; filter:saturate(.4); }
-/* 規則「?」鈕 */
-.bt-help{
+/* 規則「?」鈕 + 教練「💡」鈕 */
+.bt-help, .bt-advisor{
   width:30px; height:30px; border-radius:999px; cursor:pointer; flex:none;
   font-weight:800; font-size:.95rem; line-height:1; color:var(--gold);
   background:rgba(28,23,13,.82); border:1px solid var(--line);
   backdrop-filter:blur(8px); transition:.2s;
 }
-.bt-help:hover{ background:rgba(212,175,55,.18); transform:translateY(-1px); }
+.bt-help:hover, .bt-advisor:hover{ background:rgba(212,175,55,.18); transform:translateY(-1px); }
+.bt-advisor{ font-size:.9rem; filter:grayscale(1) opacity(.6); }
+.bt-advisor.on{ filter:none; border-color:rgba(212,175,55,.6); box-shadow:0 0 12px rgba(212,175,55,.4); background:rgba(212,175,55,.16); }
 /* 沒招可出：脈動提示「回合即將自動交給 Rovelli」 */
 .bt-end.idle{ animation:bt-end-idle 1s ease-in-out infinite; }
 @keyframes bt-end-idle{
@@ -235,6 +237,35 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   box-shadow:0 0 0 2px rgba(212,175,55,.6), 0 18px 44px rgba(0,0,0,.55);
   opacity:1; filter:none;
 }
+/* 教練建議：手牌站直、上抬、金光脈動 + 上方提示氣泡 */
+.bt-card.advise{
+  transform:rotateZ(0deg) translateY(-34px) rotateX(0deg) scale(1.12);
+  z-index:11; opacity:1; filter:none; border-color:var(--gold);
+  animation:bt-advise 1.1s ease-in-out infinite;
+}
+@keyframes bt-advise{
+  0%,100%{ box-shadow:0 16px 40px rgba(0,0,0,.5), 0 0 16px rgba(212,175,55,.5); }
+  50%{ box-shadow:0 16px 40px rgba(0,0,0,.5), 0 0 34px rgba(212,175,55,.95); }
+}
+.bc-tip{
+  position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%);
+  width:max-content; max-width:200px; z-index:13;
+  padding:.45rem .65rem; border-radius:10px; text-align:center;
+  font-size:.66rem; line-height:1.45; font-weight:600; color:#1a1408;
+  background:linear-gradient(120deg,var(--copper),var(--gold),var(--champagne));
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.bc-tip::after{
+  content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:6px solid transparent; border-top-color:var(--gold);
+}
+/* 教練建議攻擊 / 指定的目標單位：青金脈動光環 */
+.bt-unit.advise{ animation:bt-advise-u 1.1s ease-in-out infinite; }
+@keyframes bt-advise-u{
+  0%,100%{ box-shadow:0 0 0 2px rgba(212,175,55,.5), 0 0 14px rgba(212,175,55,.4); }
+  50%{ box-shadow:0 0 0 3px rgba(212,175,55,.8), 0 0 26px rgba(212,175,55,.75); }
+}
+
 .bc-cost{
   position:absolute; top:-8px; left:-8px;
   width:26px; height:26px; border-radius:50%;
@@ -312,6 +343,18 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   transition:.2s;
 }
 .tk-more:hover{ background:rgba(212,175,55,.2); }
+
+/* ---------- 教練橫幅（攻擊/結束建議的提示文字） ---------- */
+.bt-coach{
+  position:absolute; left:50%; transform:translate(-50%,8px); bottom:158px; z-index:6;
+  max-width:min(420px,86vw); text-align:center;
+  padding:.5rem .9rem; border-radius:999px;
+  font-size:.78rem; font-weight:700; line-height:1.4; color:var(--gold);
+  background:rgba(24,19,10,.92); border:1px solid rgba(212,175,55,.5);
+  backdrop-filter:blur(12px); box-shadow:0 10px 30px rgba(0,0,0,.5);
+  opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+}
+.bt-coach.show{ opacity:1; transform:translate(-50%,0); }
 
 /* ---------- 底部提示 ---------- */
 .bt-hintbar{

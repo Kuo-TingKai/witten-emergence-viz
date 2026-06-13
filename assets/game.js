@@ -611,6 +611,7 @@
         '<div class="bt-mid">' +
           '<div class="bt-turn"></div>' +
           '<button class="bt-end" type="button"></button>' +
+          '<button class="bt-advisor" type="button" aria-label="advisor">💡</button>' +
           '<button class="bt-help" type="button" aria-label="rules">?</button>' +
         '</div>' +
         '<div class="bt-row bt-row-p"></div>' +
@@ -620,6 +621,7 @@
         '<div class="bt-hand"></div>' +
       '</div>' +
       '<div class="bt-ticker" role="status" aria-live="polite"></div>' +
+      '<div class="bt-coach" role="status" aria-live="polite"></div>' +
       '<div class="bt-hintbar"></div>' +
       '<div class="bt-result"></div>';
     document.body.appendChild(stage);
@@ -627,6 +629,7 @@
     stage.querySelector(".bt-exit").addEventListener("click", exitGame);
     stage.querySelector(".bt-end").addEventListener("click", endTurn);
     stage.querySelector(".bt-help").addEventListener("click", () => showRules());
+    stage.querySelector(".bt-advisor").addEventListener("click", () => setAdvisor(!advisor));
 
     // 抽鬼牌式「抬牌」：滑鼠或手指滑過手牌時，指到的那張比其他牌高一截。
     // 用 pointermove + elementFromPoint 對滑鼠與觸控統一處理（手機可滑著看）。
@@ -697,10 +700,69 @@
     ov.addEventListener("click", e => { if (e.target === ov) close(); }); // 點背景關閉
   }
 
+  // ---------- 即時教練：建議下一步該做什麼（可開關） ----------
+  const ADVISOR_KEY = "witten-battle-advisor";
+  let advisor = readAdvisor();
+  let curAdvice = null;   // 每次 render 重算，給 renderHand / renderRow / coach banner 用
+  function readAdvisor() {
+    try { const v = localStorage.getItem(ADVISOR_KEY); if (v === "off") return false; if (v === "on") return true; } catch (e) {}
+    return true; // 預設開啟（玩家剛上手、需要幫助）
+  }
+  function setAdvisor(on) {
+    advisor = on;
+    try { localStorage.setItem(ADVISOR_KEY, on ? "on" : "off"); } catch (e) {}
+    render();
+  }
+  // 回傳 { kind, handIdx?, targetUnit?, reason }；kind: play / attackFace / attackTaunt / end
+  function advise() {
+    if (!G || G.over || G.cur !== "p" || busy) return null;
+    const me = G.p, foe = G.e, a = (gd().advice) || {};
+    const playable = me.hand.map((k, i) => ({ k, i })).filter(o => canPlay(me, o.k));
+    const find = pred => playable.find(o => pred(DEFS[o.k], o.k));
+    const readyAtk = me.field.filter(u => u.can && !u.sick && u.atk > 0);
+    const atkSum = readyAtk.reduce((s, u) => s + u.atk, 0);
+    const foeTaunt = hasTaunt(foe);
+    const bolt = find(d => d.fx === "bolt4");
+
+    // 1) 斬殺：沒嘲諷且攻擊力（+bolt）足以打死 Carl
+    if (!foeTaunt && atkSum > 0 && atkSum >= foe.hp + foe.shield) return { kind: "attackFace", reason: a.lethal };
+    if (!foeTaunt && bolt && atkSum + 4 >= foe.hp + foe.shield && foe.hp + foe.shield <= 4)
+      return { kind: "play", handIdx: bolt.i, reason: a.lethalBolt };
+    // 2) 嘲諷牆擋路：bolt 轟掉，或提示用單位先清
+    if (foeTaunt) {
+      const wall = foe.field.filter(u => u.taunt).sort((x, y) => x.hp - y.hp)[0];
+      if (bolt && wall && wall.hp <= 4) return { kind: "play", handIdx: bolt.i, targetUnit: wall, reason: a.clearTaunt };
+      if (readyAtk.length) return { kind: "attackTaunt", reason: a.attackTaunt };
+    }
+    // 3) 解掉 Carl 的大單位
+    const threat = foe.field.filter(u => !u.immune && u.atk >= 3).sort((x, y) => y.atk - x.atk)[0];
+    if (threat && bolt) return { kind: "play", handIdx: bolt.i, targetUnit: threat, reason: a.removeThreat };
+    // 4) 鋪場：先打大單位（建立攻擊力 + 糾纏連線護盾）
+    const unit = playable.filter(o => DEFS[o.k].type === "unit").sort((x, y) => DEFS[y.k].cost - DEFS[x.k].cost)[0];
+    if (unit) {
+      const d = DEFS[unit.k];
+      const reason = d.taunt ? a.playTaunt : d.immune ? a.playImmune : d.structure ? a.playStruct : a.develop;
+      return { kind: "play", handIdx: unit.i, reason };
+    }
+    // 5) 節奏：缺牌補抽 → 持續傷害 → 清場 → 補盾 → 重構
+    const draw = find(d => d.fx === "draw2"); if (draw && me.hand.length <= 4) return { kind: "play", handIdx: draw.i, reason: a.draw };
+    const dot = find(d => d.fx === "dot"); if (dot) return { kind: "play", handIdx: dot.i, reason: a.dot };
+    const aoe = find(d => d.fx === "aoe2"); if (aoe && foe.field.length >= 2) return { kind: "play", handIdx: aoe.i, reason: a.aoe };
+    const sh = find(d => d.fx === "shieldUnits"); if (sh && me.field.length >= 2) return { kind: "play", handIdx: sh.i, reason: a.shield };
+    const rc = find(d => d.fx === "reconstruct"); if (rc) return { kind: "play", handIdx: rc.i, reason: a.reconstruct };
+    // 6) 還能打臉就打臉
+    if (readyAtk.length && !foeTaunt) return { kind: "attackFace", reason: a.attackFace };
+    // 7) 任何能出的牌
+    if (playable.length) return { kind: "play", handIdx: playable[0].i, reason: a.play };
+    // 8) 沒事可做 → 結束回合
+    return { kind: "end", reason: a.end };
+  }
+
   // ---------- 渲染 ----------
   function render() {
     if (!built || !G) return;
     const g = gd();
+    curAdvice = advisor ? advise() : null;
     renderHero("p"); renderHero("e");
     renderRow("p"); renderRow("e");
     renderHand(); renderEnemyHand();
@@ -714,6 +776,16 @@
     endBtn.disabled = G.cur !== "p" || busy || G.over;
     // 沒招可出時讓「結束回合」鈕脈動，提示回合即將自動交給 Rovelli
     endBtn.classList.toggle("idle", G.cur === "p" && !busy && !G.over && !pending && !playerHasMoves());
+
+    // 教練開關鈕狀態 + 教練橫幅（出牌建議由手牌氣泡顯示；攻擊/結束建議顯示在橫幅）
+    const advBtn = stage.querySelector(".bt-advisor");
+    if (advBtn) { advBtn.classList.toggle("on", advisor); advBtn.title = advisor ? (g.advisorOn || "") : (g.advisorOff || ""); }
+    const coach = stage.querySelector(".bt-coach");
+    if (coach) {
+      const showBanner = advisor && curAdvice && curAdvice.kind !== "play" && !!curAdvice.reason;
+      coach.textContent = showBanner ? ("💡 " + curAdvice.reason) : "";
+      coach.classList.toggle("show", showBanner);
+    }
 
     stage.querySelector(".bt-hintbar").textContent = g.hint || "";
     renderResult();
@@ -793,6 +865,11 @@
       const ready = side === "p" && G.cur === "p" && u.can && !u.sick && u.atk > 0 && !busy && !G.over;
       if (ready) el.classList.add("ready");
       if (pending && pending.kind === "attack" && side === "p" && pending.i === i) el.classList.add("selected");
+      // 教練建議：己方該攻擊的單位 / 敵方該被指定的目標 → 發光
+      if (advisor && curAdvice && !pending) {
+        if (side === "p" && ready && (curAdvice.kind === "attackFace" || curAdvice.kind === "attackTaunt")) el.classList.add("advise");
+      }
+      if (advisor && curAdvice && curAdvice.targetUnit === u && pending && pending.kind === "spell") el.classList.add("advise");
       el.innerHTML =
         '<div class="bu-ico"><i data-lucide="' + DEFS[u.k].icon + '"></i></div>' +
         '<div class="bu-name">' + cardName(u.k) + '</div>' +
@@ -864,10 +941,14 @@
       const playable = G.cur === "p" && !busy && !G.over && canPlay(G.p, k);
       if (playable) el.classList.add("playable");
       if (pending && pending.kind === "spell" && pending.idx === i) el.classList.add("selected");
+      // 教練建議出這張 → 發光 + 上方提示氣泡
+      const advised = curAdvice && curAdvice.kind === "play" && curAdvice.handIdx === i && playable;
+      if (advised) el.classList.add("advise");
       const typeTxt = d.type === "unit"
         ? (d.structure ? (g.typeStruct || "結構") : (g.typeUnit || "單位"))
         : (g.typeSpell || "法術");
       el.innerHTML =
+        (advised ? '<div class="bc-tip">💡 ' + (curAdvice.reason || "") + '</div>' : "") +
         '<div class="bc-cost">' + d.cost + '</div>' +
         '<div class="bc-ico"><i data-lucide="' + d.icon + '"></i></div>' +
         '<div class="bc-name">' + cardName(k) + '</div>' +
