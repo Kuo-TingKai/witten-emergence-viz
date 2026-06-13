@@ -71,6 +71,8 @@ window.I18N["en"] = {
       start: "Start battle"
     },
     advisorOn: "Coach hints: ON (click to turn off)", advisorOff: "Coach hints: OFF (click to turn on)",
+    endHintNone: "No cards left to play this turn — end your turn (auto-passing to Rovelli)",
+    endHintAttack: "No cards left to play — attack with your units, or end your turn",
     advice: {
       lethal: "Lethal! Attack Carl’s hero with your units to finish him",
       lethalBolt: "Play this to finish Carl off right now!",

@@ -613,6 +613,7 @@
           '<button class="bt-end" type="button"></button>' +
           '<button class="bt-advisor" type="button" aria-label="advisor">💡</button>' +
           '<button class="bt-help" type="button" aria-label="rules">?</button>' +
+          '<div class="bt-endhint"></div>' +
         '</div>' +
         '<div class="bt-row bt-row-p"></div>' +
       '</div>' +
@@ -776,6 +777,17 @@
     endBtn.disabled = G.cur !== "p" || busy || G.over;
     // 沒招可出時讓「結束回合」鈕脈動，提示回合即將自動交給 Rovelli
     endBtn.classList.toggle("idle", G.cur === "p" && !busy && !G.over && !pending && !playerHasMoves());
+
+    // 出牌用光時明確提示玩家結束回合（不依賴教練開關，永遠顯示）
+    const endhint = stage.querySelector(".bt-endhint");
+    if (endhint) {
+      const myTurn = G.cur === "p" && !busy && !G.over && !pending;
+      const noCards = myTurn && !G.p.hand.some(k => canPlay(G.p, k));
+      const hasAtk = G.p.field.some(u => u.can && !u.sick && u.atk > 0);
+      const txt = !noCards ? "" : (hasAtk ? (g.endHintAttack || "") : (g.endHintNone || ""));
+      endhint.textContent = txt;
+      endhint.classList.toggle("show", !!txt);
+    }
 
     // 教練開關鈕狀態 + 教練橫幅（出牌建議由手牌氣泡顯示；攻擊/結束建議顯示在橫幅）
     const advBtn = stage.querySelector(".bt-advisor");

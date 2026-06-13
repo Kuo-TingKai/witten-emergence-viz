@@ -71,6 +71,8 @@ window.I18N["zh-Hant"] = {
       start: "開始對戰"
     },
     advisorOn: "教練提示：開（點一下關閉）", advisorOff: "教練提示：關（點一下打開）",
+    endHintNone: "這回合沒有可以出的牌了 —— 結束回合（即將自動交給 Rovelli）",
+    endHintAttack: "沒有可以出的牌了 —— 用單位攻擊，或點「結束回合」",
     advice: {
       lethal: "可以斬殺！用你的單位全力攻擊 Carl 本體",
       lethalBolt: "打這張就能直接斬殺 Carl！",

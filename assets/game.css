@@ -96,8 +96,28 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 }
 .bt-mid{
   display:flex; align-items:center; justify-content:center; gap:1.2rem;
-  min-height:40px;
+  min-height:40px; position:relative;   /* 給 .bt-endhint 定位 */
 }
+/* 出牌用光的明確提示（浮在中央控制列上方，指向「結束回合」鈕） */
+.bt-endhint{
+  position:absolute; bottom:calc(100% + 12px); left:50%; transform:translate(-50%,4px);
+  z-index:9; white-space:nowrap; max-width:90vw;
+  padding:.42rem .9rem; border-radius:999px;
+  font-size:.76rem; font-weight:800; color:#1a1408;
+  background:linear-gradient(120deg,var(--copper),var(--gold),var(--champagne));
+  box-shadow:0 6px 22px rgba(212,175,55,.45);
+  opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+}
+.bt-endhint.show{ opacity:1; transform:translate(-50%,0); animation:bt-endhint-pulse 1.1s ease-in-out infinite; }
+.bt-endhint::after{
+  content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:6px solid transparent; border-top-color:var(--gold);
+}
+@keyframes bt-endhint-pulse{
+  0%,100%{ box-shadow:0 6px 22px rgba(212,175,55,.45); }
+  50%{ box-shadow:0 6px 30px rgba(212,175,55,.9); }
+}
+@media (prefers-reduced-motion:reduce){ .bt-endhint.show{ animation:none; } }
 .bt-turn{
   font-size:.85rem; letter-spacing:.12em; font-weight:700; color:var(--gold);
 }
