@@ -107,13 +107,33 @@
     render();
     if (G.over) return;
     if (side === "e") aiTurn();
+    else maybeAutoEnd();   // 玩家回合一開始就無事可做（空手牌等）→ 自動讓 Rovelli 接手
   }
 
   function endTurn() {
     if (!G || G.over || busy) return;
+    clearTimeout(autoEndT);
     pending = null;
     if (G.cur === "p") { G.cur = "e"; beginTurn("e"); }
     else { G.cur = "p"; beginTurn("p"); }
+  }
+
+  // 玩家這回合是否還有事可做（出得起的牌 / 可攻擊的單位）
+  function playerHasMoves() {
+    if (!G || G.cur !== "p") return false;
+    if (G.p.hand.some(k => canPlay(G.p, k))) return true;
+    if (G.p.field.some(u => u.can && !u.sick && u.atk > 0)) return true;
+    return false;
+  }
+  // 丟完手牌、沒招可出時自動結束回合 → Rovelli 馬上接手（不必手動找「結束回合」鈕）
+  let autoEndT = null;
+  function maybeAutoEnd() {
+    clearTimeout(autoEndT);
+    if (!G || G.over || busy || pending || G.cur !== "p") return;
+    if (playerHasMoves()) return;
+    autoEndT = setTimeout(() => {
+      if (G && !G.over && !busy && !pending && G.cur === "p" && !playerHasMoves()) endTurn();
+    }, 750);
   }
 
   function draw(pl, silent) {
@@ -395,8 +415,8 @@
   async function playerCast(handIdx, target) {
     if (busy || !G || G.over || G.cur !== "p") return;
     busy = true; pending = null; render();
-    await animCast("p", handIdx, target);
-    busy = false; render();
+    try { await animCast("p", handIdx, target); }
+    finally { busy = false; render(); maybeAutoEnd(); }   // finally：動畫即使出錯也絕不卡死 busy
   }
 
   // ---------- 攻擊 ----------
@@ -423,34 +443,38 @@
   // ---------- AI（M1：貪婪出牌 + 嘲諷規則攻擊） ----------
   async function aiTurn() {
     busy = true; render();
-    await sleep(650);
     const e = G.e;
-    // 依優先序反覆出牌直到出不動
-    let guard = 20;
-    while (!G.over && guard-- > 0) {
-      const k = aiPick();
-      if (!k) break;
-      const idx = e.hand.indexOf(k);
-      let target = null;
-      if (DEFS[k].needsTarget) target = aiBoltTarget();
-      await animCast("e", idx, target);   // Rovelli 也把牌丟到中央 + 特效
-      render();
-      await sleep(reduceMotion ? 250 : 300);
+    try {
+      await sleep(650);
+      // 依優先序反覆出牌直到出不動
+      let guard = 20;
+      while (!G.over && guard-- > 0) {
+        const k = aiPick();
+        if (!k) break;
+        const idx = e.hand.indexOf(k);
+        let target = null;
+        if (DEFS[k].needsTarget) target = aiBoltTarget();
+        await animCast("e", idx, target);   // Rovelli 也把牌丟到中央 + 特效
+        render();
+        await sleep(reduceMotion ? 250 : 300);
+      }
+      // 攻擊（M3 強化）：斬殺優先 → 嘲諷必清 → 划算交換 → 否則打臉
+      let aguard = 20;
+      while (!G.over && aguard-- > 0) {
+        const attackers = e.field.filter(u => u.can && !u.sick && u.atk > 0);
+        if (!attackers.length) break;
+        const tgt = aiChooseAttack(attackers);
+        if (!tgt) break;
+        await animAttack("e", tgt.attacker, tgt.target);
+        attack("e", tgt.attacker, tgt.target);
+        render();
+        await sleep(420);
+      }
+    } finally {
+      busy = false;
+      // finally：即使 Rovelli 回合中動畫出錯，也一定把控制權交回玩家，不會卡死
+      if (!G.over) endTurn(); else render();
     }
-    // 攻擊（M3 強化）：斬殺優先 → 嘲諷必清 → 划算交換 → 否則打臉
-    let aguard = 20;
-    while (!G.over && aguard-- > 0) {
-      const attackers = e.field.filter(u => u.can && !u.sick && u.atk > 0);
-      if (!attackers.length) break;
-      const tgt = aiChooseAttack(attackers);
-      if (!tgt) break;
-      await animAttack("e", tgt.attacker, tgt.target);
-      attack("e", tgt.attacker, tgt.target);
-      render();
-      await sleep(420);
-    }
-    busy = false;
-    if (!G.over) endTurn(); else render();
   }
 
   // 回傳 {attacker, target:{unit}|{}}；無合理攻擊回 null
@@ -609,6 +633,8 @@
     const endBtn = stage.querySelector(".bt-end");
     endBtn.textContent = g.endTurn || "結束回合";
     endBtn.disabled = G.cur !== "p" || busy || G.over;
+    // 沒招可出時讓「結束回合」鈕脈動，提示回合即將自動交給 Rovelli
+    endBtn.classList.toggle("idle", G.cur === "p" && !busy && !G.over && !pending && !playerHasMoves());
 
     stage.querySelector(".bt-hintbar").textContent = g.hint || "";
     renderResult();
@@ -664,9 +690,8 @@
 
   async function doPlayerAttack(attacker, target) {
     busy = true; render();
-    await animAttack("p", attacker, target);
-    attack("p", attacker, target);
-    busy = false; render();
+    try { await animAttack("p", attacker, target); attack("p", attacker, target); }
+    finally { busy = false; render(); maybeAutoEnd(); }
   }
 
   function badge(cls, txt) { return '<span class="bu-badge ' + cls + '">' + txt + '</span>'; }

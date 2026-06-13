@@ -94,6 +94,12 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 }
 .bt-end:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 6px 24px rgba(212,175,55,.45); }
 .bt-end:disabled{ opacity:.35; cursor:default; filter:saturate(.4); }
+/* 沒招可出：脈動提示「回合即將自動交給 Rovelli」 */
+.bt-end.idle{ animation:bt-end-idle 1s ease-in-out infinite; }
+@keyframes bt-end-idle{
+  0%,100%{ box-shadow:0 4px 18px rgba(212,175,55,.3); transform:scale(1); }
+  50%{ box-shadow:0 6px 30px rgba(212,175,55,.7); transform:scale(1.06); }
+}
 
 /* ---------- 場上單位 ---------- */
 .bt-unit{

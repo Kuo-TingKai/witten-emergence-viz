@@ -162,3 +162,25 @@ JLMS 糾錯 → 從棄牌堆重構、TQFT 拓撲 → 免疫法術…），出牌
   magic/trap/summon）全數觸發**。i18n zh/en **80/80 對齊**、`game.css` 177/177 大括號平衡。
 - Fallback：把出牌點改回直接 `playCard`+`render`、刪 `animCast`/`playerCast`/`flyCard`/`spawnFx`/`vfxOf`
   與 `.bt-fly`/`.bt-fx` CSS 即還原 M5 即時出牌。
+
+## M7 — 回合自動交棒（修「丟完牌後 Rovelli 不接手」）+ busy 防卡死
+
+回報問題：玩家把手牌丟到桌上後，Carlo Rovelli 沒有「馬上」進行他的回合。
+根因有二：(1) Rovelli 只在玩家**手動按「結束回合」**時才會行動（回合制設計，但對玩家不直覺）；
+(2) M6 把出牌改成非同步 `playerCast`（`busy=true … await animCast … busy=false`），
+**一旦動畫中任何一行在真實瀏覽器丟例外，`busy` 會永遠停在 `true`**，「結束回合」鈕永久 disabled →
+Rovelli 永遠無法行動、整局凍結（headless 測試因 stub 掉 lucide 測不出來）。
+
+- **`busy` 防卡死（try/finally）**：`playerCast` / `doPlayerAttack` / `aiTurn` 全部把主體包進
+  `try … finally`，`finally` 一定把 `busy` 設回 `false` 並 `render()`；`aiTurn` 的 `finally` 還會
+  `endTurn()` 把控制權交回玩家。動畫即使出錯也不再凍結整局。
+- **回合自動交棒（auto-end）**：新增 `playerHasMoves()`（出得起的牌 / 可攻擊單位）與 `maybeAutoEnd()`，
+  在 `playerCast`、`doPlayerAttack` 結束後與玩家回合開始時呼叫——當玩家**已無事可做**（mana 花完、
+  新單位都在召喚癱瘓、且沒有可攻擊的舊單位）時，延遲 750ms 自動 `endTurn()`，Rovelli 立刻接手。
+  保留手動「結束回合」鈕：玩家若還有可攻擊單位但不想攻擊，仍可手動結束（auto-end 不會搶走主導權）。
+- **視覺提示**：無招可出時「結束回合」鈕加 `.idle` class 脈動，預告回合即將自動交給 Rovelli。
+- **驗證**：jsdom 跑 300 局 → **100% 分出勝負、0 JS 錯誤**（median 自 42 降到 28 iters，交棒更乾淨）。
+  專項驗證：玩家「**全程從不按結束回合**、只丟牌＋攻擊」→ 遊戲仍完整跑到分出勝負（你的時空解體了）、
+  End-turn 點擊 0 次、0 JS 錯誤 → 證明 auto-end 確實自動把回合交給 Rovelli。`game.css` 181/181 平衡。
+- Fallback：移除 `playerHasMoves`/`maybeAutoEnd`/`autoEndT` 與 `.idle` 脈動、把 try/finally 還原即回 M6
+  （手動結束回合）。
