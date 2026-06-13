@@ -66,3 +66,14 @@ JLMS 糾錯 → 從棄牌堆重構、TQFT 拓撲 → 免疫法術…），出牌
 - zh 字典加 `game` 區段 + `ui.viewBattle`；`index.html` 掛 css/js。
 - 調整：時間卡降為 1 費（否則首回合雙方無牌可出）。
 - 驗證：headless chromium 跑 6 回合自動對打，出牌/攻擊/AI/CS 放電/退出皆正常，0 JS 錯誤。
+
+## M2 — 教學連動（機制即教學）
+
+- 出牌即顯示 `bt-ticker`：誰出了什麼卡 + 該卡物理 flavor 一句話（8 秒自動收）。
+- ticker 上「展開數學細節」按鈕：對有 modal 的卡（time/space/heat/energy/mass/rt/jlms/tqft），
+  直接觸發 `main .emerge[data-k]` 的 click → 復用 details.js 既有金色 modal（z100 蓋過戰場）；
+  軟科普模式自動隱藏按鈕（與展廳一致）。
+- 糾纏連線視覺：場上相鄰單位之間渲染 `bt-link` 金色脈動連線，呼應「回合開始護盾＝連線數」。
+- zh `game.linkTip`；ticker / link RWD（手機 ticker 移到頂部）。
+- 驗證：headless 7 回合，ticker 每次出牌皆顯示、modal 成功開啟（標題正確）、
+  玩家連線數達 2、0 JS 錯誤。

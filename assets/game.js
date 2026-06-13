@@ -194,8 +194,40 @@
       }
       pl.grave.push(k);
     }
+    showTicker(side, k);
     checkOver();
     return true;
+  }
+
+  // ---------- 教學 ticker：出牌即解說（機制即教學的掛載點） ----------
+  let tickerT = null;
+  function showTicker(side, k) {
+    if (!built) return;
+    const g = gd();
+    const el = stage.querySelector(".bt-ticker");
+    if (!el) return;
+    const who = side === "p" ? (g.you || "你") : (g.enemy || "對手");
+    // 有對應數學 modal 且非軟科普模式 → 給「展開數學細節」按鈕（沿用 details.js）
+    const srcCard = document.querySelector('main .emerge[data-k="' + k + '"]');
+    const canOpen = !!srcCard && srcCard.classList.contains("clickable") &&
+                    !document.body.classList.contains("m-soft");
+    el.innerHTML =
+      '<div class="tk-head">' +
+        '<span class="tk-who">' + who + '</span>' +
+        '<span class="tk-name"><i data-lucide="' + DEFS[k].icon + '"></i>' + cardName(k) + '</span>' +
+      '</div>' +
+      '<div class="tk-flavor">' + (gcard(k).flavor || "") + '</div>' +
+      (canOpen ? '<button class="tk-more" type="button">' + (g.learnMore || "→") + '</button>' : "");
+    if (canOpen) {
+      el.querySelector(".tk-more").addEventListener("click", ev => {
+        ev.stopPropagation();
+        srcCard.click();           // → details.js 既有金色 modal（z100 蓋過戰場）
+      });
+    }
+    el.classList.add("show");
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+    clearTimeout(tickerT);
+    tickerT = setTimeout(() => el.classList.remove("show"), 8000);
   }
 
   // ---------- 攻擊 ----------
@@ -298,6 +330,7 @@
         '<div class="bt-hero" data-side="p"></div>' +
         '<div class="bt-hand"></div>' +
       '</div>' +
+      '<div class="bt-ticker" role="status" aria-live="polite"></div>' +
       '<div class="bt-hintbar"></div>' +
       '<div class="bt-result"></div>';
     document.body.appendChild(stage);
@@ -427,6 +460,13 @@
         if (spellOk || atkOk) el.classList.add("targetable");
       }
       el.addEventListener("click", ev => { ev.stopPropagation(); onUnitClick(side, i); });
+      // 糾纏連線：相鄰單位之間的金色連線（回合開始化作護盾 = 面積=糾纏）
+      if (i > 0) {
+        const link = document.createElement("div");
+        link.className = "bt-link";
+        link.title = g.linkTip || "";
+        row.appendChild(link);
+      }
       row.appendChild(el);
     });
   }
