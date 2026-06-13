@@ -345,7 +345,7 @@
       fly.style.top = srcRect.top + "px";
       fly.style.width = srcRect.width + "px";
       fly.style.height = srcRect.height + "px";
-      stage.appendChild(fly);
+      document.body.appendChild(fly);   // 掛在 body（非 #battle）才能蓋過 z60 選單
       if (window.lucide && lucide.createIcons) lucide.createIcons();
       const dx = c.x - (srcRect.left + srcRect.width / 2);
       const dy = c.y - (srcRect.top + srcRect.height / 2);
@@ -402,7 +402,7 @@
       const h = heroEl(enSide); if (h) hitEls.push([h, 2]);
     }
 
-    await flyCard(srcRect, k, side === "p");
+    await flyCard(srcRect, k, true);   // 出的牌一律正面飛出（看得到 Carl 選了哪張）
     spawnFx(k);
     hitEls.forEach(([el, n]) => {
       el.classList.add("bt-hit"); floatDmg(el, n);
@@ -859,6 +859,8 @@
   function leave() {
     document.body.classList.remove("v-battle");
     active = false;
+    // 清掉掛在 body 上、可能還在飛的出牌殘影
+    document.querySelectorAll(".bt-fly").forEach(el => el.remove());
   }
   document.addEventListener("view:change", e => {
     if (e.detail && e.detail.view === "battle") enter(); else leave();

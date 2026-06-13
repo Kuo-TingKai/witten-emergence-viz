@@ -34,7 +34,12 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   display:flex; align-items:center; justify-content:space-between;
   padding:.5rem 4.5rem; gap:1rem; min-height:86px;
 }
-.bt-enemy{ border-bottom:1px solid rgba(212,175,55,.08); }
+/* Carl 的手牌牌背緊貼在他的 profile 框右邊（左上角），讓出右上角給切換選單，
+   也讓他的出牌動畫從左上角飛出、不被選單擋住。 */
+.bt-enemy{
+  border-bottom:1px solid rgba(212,175,55,.08);
+  justify-content:flex-start; gap:1.3rem; padding-right:6rem;
+}
 .bt-player{ border-top:1px solid rgba(212,175,55,.08); min-height:150px; align-items:flex-end; }
 
 .bt-hero{
@@ -335,7 +340,7 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 
 /* ---------- 出牌：把牌丟到牌桌中央的飛行殘影 ---------- */
 .bt-fly{
-  position:fixed; z-index:30; border-radius:12px; padding:.5rem;
+  position:fixed; z-index:70; border-radius:12px; padding:.5rem;   /* 70 > 切換選單 60，丟牌動畫永遠在最上層 */
   border:1px solid rgba(212,175,55,.6); background:var(--card);
   box-shadow:0 22px 54px rgba(0,0,0,.6), 0 0 32px rgba(212,175,55,.42);
   display:flex; flex-direction:column; align-items:center; gap:.2rem;
