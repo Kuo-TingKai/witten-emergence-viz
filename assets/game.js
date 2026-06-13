@@ -289,6 +289,116 @@
     setTimeout(() => d.remove(), 900);
   }
 
+  // ---------- 出牌動畫：把手牌丟到牌桌中央 + 依類型展示特效 ----------
+  // 特效類型（呼應 TCG 的攻擊 / 防禦 / 魔法 / 陷阱 + 召喚）：
+  //   damage spell → attack；shield → defense；持續 dot → trap；
+  //   抽牌 / 重構 → magic；單位入場 → 進攻型 summon、防禦型(嘲諷/結構/0攻) defense。
+  function vfxOf(k) {
+    const d = DEFS[k];
+    if (d.type === "unit") return (d.taunt || d.structure || d.atk === 0) ? "defense" : "summon";
+    switch (d.fx) {
+      case "bolt4": case "aoe2": return "attack";
+      case "shieldUnits": return "defense";
+      case "dot": return "trap";
+      default: return "magic";
+    }
+  }
+  function boardCenter() {
+    const b = stage.querySelector(".bt-board").getBoundingClientRect();
+    return { x: b.left + b.width / 2, y: b.top + b.height / 2 };
+  }
+  // 卡片從來源位置飛到牌桌中央（CSS transition；無來源或 reduced-motion 則略過）
+  function flyCard(srcRect, k, faceUp) {
+    return new Promise(resolve => {
+      if (reduceMotion || !srcRect || srcRect.width === 0) { resolve(); return; }
+      const c = boardCenter();
+      const d = DEFS[k];
+      const fly = document.createElement("div");
+      fly.className = "bt-fly" + (faceUp ? "" : " back");
+      if (faceUp) {
+        fly.innerHTML =
+          '<div class="bc-cost">' + d.cost + '</div>' +
+          '<div class="bc-ico"><i data-lucide="' + d.icon + '"></i></div>' +
+          '<div class="bc-name">' + cardName(k) + '</div>';
+      }
+      fly.style.left = srcRect.left + "px";
+      fly.style.top = srcRect.top + "px";
+      fly.style.width = srcRect.width + "px";
+      fly.style.height = srcRect.height + "px";
+      stage.appendChild(fly);
+      if (window.lucide && lucide.createIcons) lucide.createIcons();
+      const dx = c.x - (srcRect.left + srcRect.width / 2);
+      const dy = c.y - (srcRect.top + srcRect.height / 2);
+      void fly.offsetWidth; // 強制 reflow 讓 transition 生效
+      fly.style.transform = "translate(" + dx + "px," + dy + "px) scale(1.25)";
+      setTimeout(() => {
+        fly.classList.add("land");
+        setTimeout(() => fly.remove(), 200);
+        resolve();
+      }, 340);
+    });
+  }
+  // 牌桌中央的類型特效爆裂（環 + 圖標 + 標籤）
+  function spawnFx(k) {
+    if (reduceMotion || !built) return;
+    const g = gd(), v = vfxOf(k);
+    const labels = { attack: g.vfxAttack, defense: g.vfxDefense, magic: g.vfxMagic, trap: g.vfxTrap, summon: g.vfxSummon };
+    const fx = document.createElement("div");
+    fx.className = "bt-fx fx-" + v;
+    fx.innerHTML =
+      '<span class="fx-ring"></span>' +
+      '<span class="fx-core"><i data-lucide="' + DEFS[k].icon + '"></i></span>' +
+      '<span class="fx-label">' + (labels[v] || "") + '</span>';
+    stage.querySelector(".bt-board").appendChild(fx);
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+    setTimeout(() => fx.remove(), 820);
+  }
+  // 完整出牌動畫：抓來源 → 飛到中央 → 特效 → 傷害類閃目標 → 套用狀態
+  async function animCast(side, handIdx, target) {
+    const pl = own(side), k = pl.hand[handIdx];
+    if (k == null) return;
+    const d = DEFS[k], enSide = side === "p" ? "e" : "p";
+
+    // 來源卡矩形（玩家＝手牌該張；對手＝牌背，手機隱藏則退回英雄）
+    let srcRect = null;
+    if (side === "p") {
+      const el = stage.querySelectorAll(".bt-hand .bt-card")[handIdx];
+      if (el) srcRect = el.getBoundingClientRect();
+    } else {
+      const backs = stage.querySelectorAll(".bt-ehand .bt-back");
+      const el = backs[Math.min(handIdx, backs.length - 1)];
+      let r = el ? el.getBoundingClientRect() : null;
+      if (!r || r.width === 0) { const h = heroEl("e"); r = h ? h.getBoundingClientRect() : null; }
+      srcRect = r;
+    }
+
+    // 先抓傷害類法術的目標 element（playCard 後 render 會重建）
+    const hitEls = [];
+    if (d.fx === "bolt4") {
+      const tEl = target && target.unit ? unitEl(enSide, target.unit) : heroEl(enSide);
+      if (tEl) hitEls.push([tEl, 4]);
+    } else if (d.fx === "aoe2") {
+      own(enSide).field.forEach(u => { if (!u.immune) { const el = unitEl(enSide, u); if (el) hitEls.push([el, 2]); } });
+      const h = heroEl(enSide); if (h) hitEls.push([h, 2]);
+    }
+
+    await flyCard(srcRect, k, side === "p");
+    spawnFx(k);
+    hitEls.forEach(([el, n]) => {
+      el.classList.add("bt-hit"); floatDmg(el, n);
+      setTimeout(() => el.classList.remove("bt-hit"), 320);
+    });
+    await sleep(reduceMotion ? 0 : 200);
+    playCard(side, handIdx, target);
+  }
+  // 玩家出牌入口：鎖輸入 → 動畫 → 解鎖重繪
+  async function playerCast(handIdx, target) {
+    if (busy || !G || G.over || G.cur !== "p") return;
+    busy = true; pending = null; render();
+    await animCast("p", handIdx, target);
+    busy = false; render();
+  }
+
   // ---------- 攻擊 ----------
   function validAttackTargets(side) {
     const en = opp(side);
@@ -323,9 +433,9 @@
       const idx = e.hand.indexOf(k);
       let target = null;
       if (DEFS[k].needsTarget) target = aiBoltTarget();
-      playCard("e", idx, target);
+      await animCast("e", idx, target);   // Rovelli 也把牌丟到中央 + 特效
       render();
-      await sleep(700);
+      await sleep(reduceMotion ? 250 : 300);
     }
     // 攻擊（M3 強化）：斬殺優先 → 嘲諷必清 → 划算交換 → 否則打臉
     let aguard = 20;
@@ -542,8 +652,8 @@
   function onHeroClick(side) {
     if (!pending || side !== "e" || busy || G.over) return;
     if (pending.kind === "spell") {
-      playCard("p", pending.idx, { hero: true });
-      pending = null; render();
+      const idx = pending.idx; pending = null;
+      playerCast(idx, { hero: true });
     } else if (pending.kind === "attack" && validAttackTargets("p").hero) {
       const u = G.p.field[pending.i];
       pending = null;
@@ -621,8 +731,8 @@
       if (!pending) return;
       if (pending.kind === "spell") {
         if (u.immune) return;   // 拓撲免疫：不可被法術指定
-        playCard("p", pending.idx, { unit: u });
-        pending = null; render();
+        const idx = pending.idx; pending = null;
+        playerCast(idx, { unit: u });
       } else if (pending.kind === "attack") {
         const v = validAttackTargets("p");
         if (!v.units.includes(u)) return;
@@ -674,9 +784,7 @@
       pending = (pending && pending.kind === "spell" && pending.idx === i) ? null : { kind: "spell", idx: i };
       render();
     } else {
-      pending = null;
-      playCard("p", i, null);
-      render();
+      playerCast(i, null);   // 丟到牌桌中央 + 類型特效
     }
   }
 

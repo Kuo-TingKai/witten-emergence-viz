@@ -139,3 +139,26 @@ JLMS 糾錯 → 從棄牌堆重構、TQFT 拓撲 → 免疫法術…），出牌
   - i18n 鍵 zh/en **75/75 全對齊**；`game.css` 大括號平衡。
 - Fallback：仍只動 `game.js` + `game.css` + 兩個 i18n 檔 + README/本檔；移除這些增量即回到 M4
   鏡像對打版本。LQG 牌組是純資料 + faction 標記，拔掉 `lqg_*` 卡與 `faction` 過濾即還原。
+
+## M6 — 出牌動畫：把牌丟到牌桌中央 + 攻擊/防禦/魔法/陷阱特效
+
+回報問題：點手牌時牌直接消失、單位才出現，沒有「丟到中間牌桌」的動作，法術也完全沒有施法特效。
+原因：`onHandClick`／`onUnitClick`／`onHeroClick` 是同步 `playCard` + `render`，跳過任何過場動畫。
+
+- **`animCast(side, handIdx, target)`**（新）取代出牌時的直接 `playCard`：抓來源卡矩形 → `flyCard`
+  把卡的飛行殘影從手牌位置平移＋放大到 `.bt-board` 中央（CSS transition，`void offsetWidth` 觸發、
+  不用 rAF 以相容 headless）→ `spawnFx` 在中央爆出類型特效 → 傷害類法術預抓目標 element 閃
+  `bt-hit` + 飄傷害數字 → 最後才 `playCard` 套用狀態 + `render`。
+- **玩家入口 `playerCast`**：`busy=true; render()` 鎖住輸入 → `await animCast("p",…)` → `busy=false; render()`，
+  三個出牌點（一般牌 / 指定單位 / 打臉）全改走它。**Rovelli 的 AI 出牌迴圈也改 `await animCast("e",…)`**，
+  所以雙方都會把牌丟到桌上、雙方法術都有特效（牌背從對手手牌區飛出，手機隱藏牌背時退回從英雄飛出）。
+- **特效分五類**（呼應 TCG 攻擊/防禦/魔法/陷阱 + 召喚），`vfxOf(k)` 由 `fx`/旗標推導、配色各異：
+  攻擊(紅, bolt4/aoe2)、防禦(青, shieldUnits + 嘲諷/結構/0攻單位)、魔法(金, draw2/reconstruct)、
+  陷阱(紫虛線, dot)、召喚(綠, 進攻型單位)。中央環擴散 + 圖標脈衝 + 大字標籤（i18n `vfxAttack`…`vfxSummon`）。
+- 尊重 `prefers-reduced-motion`：reduced 時 `flyCard`/`spawnFx` 直接略過，僅套狀態。
+- `.bt-board`、`.bt-hero` 補 `position:relative`（特效中心定位 / 飄字錨點）。
+- **驗證**：jsdom 跑 **300 局**（含新非同步出牌路徑）→ **100% 分出勝負、0 JS 錯誤、0 未結束**
+  （iters min 18 / median 42 / max 57）；單局取樣確認**一局產生 43 次飛牌、五種特效（attack/defense/
+  magic/trap/summon）全數觸發**。i18n zh/en **80/80 對齊**、`game.css` 177/177 大括號平衡。
+- Fallback：把出牌點改回直接 `playCard`+`render`、刪 `animCast`/`playerCast`/`flyCard`/`spawnFx`/`vfxOf`
+  與 `.bt-fly`/`.bt-fx` CSS 即還原 M5 即時出牌。

@@ -55,6 +55,7 @@ window.I18N["en"] = {
     exitGame: "Leave battle",
     learnMore: "Expand the math →",
     taunt: "Taunt", immune: "Topo", sick: "Condensing",
+    vfxAttack: "Attack", vfxDefense: "Defense", vfxMagic: "Spell", vfxTrap: "Trap", vfxSummon: "Summon",
     linkTip: "Entanglement link: becomes your hero’s shield at the start of your turn (area = entanglement)",
     typeUnit: "Unit", typeSpell: "Spell", typeStruct: "Structure",
     hint: "Click a card to play it · click your unit then a target to attack · shield at turn start = entanglement links between adjacent units (area = entanglement)",

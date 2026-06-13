@@ -55,6 +55,7 @@ window.I18N["zh-Hant"] = {
     exitGame: "離開對戰",
     learnMore: "展開數學細節 →",
     taunt: "嘲諷", immune: "拓撲", sick: "凝聚中",
+    vfxAttack: "攻擊", vfxDefense: "防禦", vfxMagic: "魔法", vfxTrap: "陷阱", vfxSummon: "召喚",
     linkTip: "糾纏連線：回合開始時化作本體護盾（面積＝糾纏）",
     typeUnit: "單位", typeSpell: "法術", typeStruct: "結構",
     hint: "點手牌出牌 · 點自己的單位再點目標攻擊 · 回合開始時護盾＝相鄰單位的糾纏連線數（面積＝糾纏）",

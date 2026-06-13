@@ -42,6 +42,7 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
   padding:.5rem .9rem; border-radius:14px;
   border:1px solid var(--line); background:var(--card);
   backdrop-filter:blur(8px); transition:box-shadow .25s, border-color .25s;
+  position:relative;   /* 讓飄傷害數字 .bt-dmg 以英雄為錨點 */
 }
 .bh-portrait{
   width:46px; height:46px; border-radius:50%;
@@ -70,6 +71,7 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 .bt-board{
   flex:1; display:flex; flex-direction:column; justify-content:center;
   gap:.6rem; padding:.3rem 1rem; min-height:0; perspective:1300px;
+  position:relative;   /* 出牌特效（.bt-fx）以此為中心定位 */
 }
 .bt-row{
   display:flex; justify-content:center; align-items:stretch; gap:.55rem;
@@ -324,6 +326,57 @@ body.v-battle #battle{ display:flex; flex-direction:column; }
 .br-restart:hover{ transform:translateY(-1px); box-shadow:0 6px 22px rgba(212,175,55,.4); }
 .br-exit{ background:transparent; border:1px solid var(--line); color:var(--muted); }
 .br-exit:hover{ border-color:rgba(212,175,55,.5); color:var(--gold); }
+
+/* ---------- 出牌：把牌丟到牌桌中央的飛行殘影 ---------- */
+.bt-fly{
+  position:fixed; z-index:30; border-radius:12px; padding:.5rem;
+  border:1px solid rgba(212,175,55,.6); background:var(--card);
+  box-shadow:0 22px 54px rgba(0,0,0,.6), 0 0 32px rgba(212,175,55,.42);
+  display:flex; flex-direction:column; align-items:center; gap:.2rem;
+  pointer-events:none; backdrop-filter:blur(8px);
+  transition:transform .34s cubic-bezier(.4,0,.2,1), opacity .34s, filter .2s;
+}
+.bt-fly .bc-ico{ color:var(--gold); margin-top:.1rem; }
+.bt-fly .bc-ico svg{ width:24px; height:24px; }
+.bt-fly .bc-name{ font-size:.72rem; font-weight:800; text-align:center; line-height:1.2; }
+.bt-fly.back{
+  background:radial-gradient(20px 20px at 50% 50%, rgba(212,175,55,.3), transparent 70%),
+             linear-gradient(160deg,#221a0c,#14100a);
+}
+.bt-fly.land{ filter:brightness(1.5) saturate(1.3); }
+
+/* ---------- 出牌特效：中央依類型爆裂（攻擊/防禦/魔法/陷阱/召喚） ---------- */
+.bt-fx{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  z-index:9; pointer-events:none;
+  display:flex; align-items:center; justify-content:center;
+}
+.fx-ring{
+  position:absolute; width:78px; height:78px; border-radius:50%;
+  border:3px solid var(--gold); animation:fx-ring .82s ease-out forwards;
+}
+.fx-core{ color:var(--gold); display:flex; animation:fx-core .82s ease-out forwards; }
+.fx-core svg{ width:40px; height:40px; }
+.fx-label{
+  position:absolute; top:100%; margin-top:8px; white-space:nowrap;
+  font-weight:900; font-size:1.05rem; letter-spacing:.28em; padding-left:.28em;
+  color:var(--gold); animation:fx-label .82s ease-out forwards;
+}
+@keyframes fx-ring{ 0%{ opacity:.95; transform:scale(.32); } 100%{ opacity:0; transform:scale(2.5); } }
+@keyframes fx-core{ 0%{ opacity:0; transform:scale(.4); } 30%{ opacity:1; transform:scale(1.35); } 100%{ opacity:0; transform:scale(1); } }
+@keyframes fx-label{ 0%{ opacity:0; transform:translateY(8px) scale(.8); } 35%{ opacity:1; transform:translateY(0) scale(1); } 100%{ opacity:0; transform:translateY(-8px); } }
+
+/* 類型配色 —— 攻擊紅、防禦青、魔法金、陷阱紫、召喚綠 */
+.fx-attack .fx-ring{ border-color:#ff6b6b; box-shadow:0 0 34px rgba(255,80,80,.75); }
+.fx-attack .fx-core, .fx-attack .fx-label{ color:#ff9a9a; text-shadow:0 0 14px rgba(255,80,80,.85); }
+.fx-defense .fx-ring{ border-color:#7fd6ff; box-shadow:0 0 34px rgba(95,200,255,.6); }
+.fx-defense .fx-core, .fx-defense .fx-label{ color:#bfe9ff; text-shadow:0 0 14px rgba(95,200,255,.8); }
+.fx-magic .fx-ring{ border-color:var(--gold); box-shadow:0 0 34px rgba(212,175,55,.65); }
+.fx-magic .fx-core, .fx-magic .fx-label{ color:var(--gold); text-shadow:0 0 14px rgba(212,175,55,.8); }
+.fx-trap .fx-ring{ border-color:#b98cff; border-style:dashed; box-shadow:0 0 34px rgba(150,110,255,.65); }
+.fx-trap .fx-core, .fx-trap .fx-label{ color:#cbb0ff; text-shadow:0 0 14px rgba(150,110,255,.8); }
+.fx-summon .fx-ring{ border-color:#7fe6a8; box-shadow:0 0 34px rgba(120,230,160,.65); }
+.fx-summon .fx-core, .fx-summon .fx-label{ color:#9ff0bf; text-shadow:0 0 14px rgba(120,230,160,.8); }
 
 /* ---------- RWD（M4 再細修，先保底） ---------- */
 @media (max-width:680px){
