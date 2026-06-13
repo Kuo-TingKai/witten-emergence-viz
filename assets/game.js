@@ -8,19 +8,33 @@
 // ============================================================
 (function () {
   // ---------- 卡片機制定義（文案在 i18n；這裡只放數值與旗標） ----------
+  // faction：holo＝玩家（全像 / It-from-Qubit）；lqg＝對手 Carlo Rovelli（迴圈量子重力）。
+  // fx＝效果原型，引擎與 AI 依 fx/旗標運作（與卡名無關），兩套牌組共用同一套機制。
   const DEFS = {
-    time:   { cost: 1, type: "spell", icon: "hourglass" },
-    space:  { cost: 2, type: "unit", atk: 2, hp: 3, icon: "globe" },
-    heat:   { cost: 3, type: "spell", icon: "flame" },
-    energy: { cost: 2, type: "spell", needsTarget: true, icon: "zap" },
-    mass:   { cost: 3, type: "unit", atk: 1, hp: 6, taunt: true, icon: "target" },
-    rt:     { cost: 2, type: "spell", icon: "spline" },
-    jlms:   { cost: 2, type: "spell", icon: "shield" },
-    tqft:   { cost: 4, type: "unit", atk: 3, hp: 3, immune: true, icon: "infinity" },
-    happy:  { cost: 4, type: "unit", atk: 0, hp: 7, structure: true, icon: "hexagon" },
-    cs:     { cost: 3, type: "spell", icon: "waves" },
+    // ---- 玩家陣營：全像糾纏（AdS/CFT · It from Qubit） ----
+    time:   { faction: "holo", cost: 1, type: "spell", icon: "hourglass", fx: "draw2" },
+    space:  { faction: "holo", cost: 2, type: "unit", atk: 2, hp: 3, icon: "globe", fx: "buffIfAllies" },
+    heat:   { faction: "holo", cost: 3, type: "spell", icon: "flame", fx: "aoe2" },
+    energy: { faction: "holo", cost: 2, type: "spell", needsTarget: true, icon: "zap", fx: "bolt4" },
+    mass:   { faction: "holo", cost: 3, type: "unit", atk: 1, hp: 6, taunt: true, icon: "target" },
+    rt:     { faction: "holo", cost: 2, type: "spell", icon: "spline", fx: "shieldUnits" },
+    jlms:   { faction: "holo", cost: 2, type: "spell", icon: "shield", fx: "reconstruct" },
+    tqft:   { faction: "holo", cost: 4, type: "unit", atk: 3, hp: 3, immune: true, icon: "infinity" },
+    happy:  { faction: "holo", cost: 4, type: "unit", atk: 0, hp: 7, structure: true, icon: "hexagon" },
+    cs:     { faction: "holo", cost: 3, type: "spell", icon: "waves", fx: "dot" },
+    // ---- 對手陣營：Carlo Rovelli · 迴圈量子重力（Loop Quantum Gravity） ----
+    lqg_holonomy:    { faction: "lqg", cost: 1, type: "spell", icon: "circle-dot", fx: "draw2" },
+    lqg_node:        { faction: "lqg", cost: 2, type: "unit", atk: 2, hp: 3, icon: "share-2", fx: "buffIfAllies" },
+    lqg_foam:        { faction: "lqg", cost: 3, type: "spell", icon: "cloud", fx: "aoe2" },
+    lqg_hamiltonian: { faction: "lqg", cost: 2, type: "spell", needsTarget: true, icon: "sigma", fx: "bolt4" },
+    lqg_volume:      { faction: "lqg", cost: 3, type: "unit", atk: 1, hp: 6, taunt: true, icon: "box" },
+    lqg_area:        { faction: "lqg", cost: 2, type: "spell", icon: "grid-3x3", fx: "shieldUnits" },
+    lqg_bounce:      { faction: "lqg", cost: 2, type: "spell", icon: "refresh-cw", fx: "reconstruct" },
+    lqg_diffeo:      { faction: "lqg", cost: 4, type: "unit", atk: 3, hp: 3, immune: true, icon: "git-compare" },
+    lqg_planck:      { faction: "lqg", cost: 4, type: "unit", atk: 0, hp: 7, structure: true, icon: "ruler" },
+    lqg_immirzi:     { faction: "lqg", cost: 3, type: "spell", icon: "sliders-horizontal", fx: "dot" },
   };
-  const KEYS = Object.keys(DEFS);
+  const FACTION_KEYS = f => Object.keys(DEFS).filter(k => DEFS[k].faction === f);
   const HP0 = 20, HAND_MAX = 8, FIELD_MAX = 6, ENT_MAX = 10, COPIES = 2;
 
   // ---------- i18n 取用（en 缺 game 區段時回退 zh-Hant） ----------
@@ -32,11 +46,13 @@
     return dict().game ||
            ((window.I18N && window.I18N["zh-Hant"]) || {}).game || {};
   }
+  function gcard(k) { return (gd().cards || {})[k] || {}; }
+  // 玩家陣營卡名沿用展廳概念卡 card.<k>.title；LQG 卡名讀 game.cards.<k>.name
   function cardName(k) {
     const c = (dict().card || {})[k];
-    return (c && c.title) || k;
+    if (c && c.title) return c.title;
+    return gcard(k).name || k;
   }
-  function gcard(k) { return (gd().cards || {})[k] || {}; }
   function fmt(s, vars) {
     return String(s || "").replace(/\{(\w+)\}/g, (m, key) => (vars && key in vars) ? vars[key] : m);
   }
@@ -46,29 +62,29 @@
   let stage = null, built = false, active = false, busy = false;
   let pending = null;      // {kind:'spell', idx} | {kind:'attack', i}
 
-  function newDeck() {
+  function newDeck(faction) {
     const d = [];
-    KEYS.forEach(k => { for (let i = 0; i < COPIES; i++) d.push(k); });
+    FACTION_KEYS(faction).forEach(k => { for (let i = 0; i < COPIES; i++) d.push(k); });
     for (let i = d.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [d[i], d[j]] = [d[j], d[i]];
     }
     return d;
   }
-  function newPlayer() {
-    return { hp: HP0, shield: 0, ent: 0, maxEnt: 0, deck: newDeck(),
+  function newPlayer(faction) {
+    return { faction, hp: HP0, shield: 0, ent: 0, maxEnt: 0, deck: newDeck(faction),
              hand: [], field: [], grave: [], cs: 0, fatigue: 0, turns: 0 };
   }
   function links(pl) { return Math.max(0, pl.field.length - 1); }
   function hasTaunt(pl) { return pl.field.some(u => u.taunt); }
-  function hasHappy(pl) { return pl.field.some(u => u.k === "happy"); }
+  function hasStructure(pl) { return pl.field.some(u => u.structure); }
   function opp(side) { return side === "p" ? G.e : G.p; }
   function own(side) { return side === "p" ? G.p : G.e; }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   // ---------- 遊戲流程 ----------
   function startGame() {
-    G = { p: newPlayer(), e: newPlayer(), cur: "p", over: false, winner: null };
+    G = { p: newPlayer("holo"), e: newPlayer("lqg"), cur: "p", over: false, winner: null };
     pending = null; busy = false;
     for (let i = 0; i < 4; i++) { draw(G.p, true); draw(G.e, true); }
     beginTurn("p");
@@ -117,8 +133,8 @@
   function dmgHero(side, n, o) {
     const pl = own(side);
     o = o || {};
-    // HaPPY 容錯：本體受傷 -1
-    if (!o.noHappy && hasHappy(pl) && n > 0) n = Math.max(0, n - 1);
+    // 結構容錯（HaPPY 碼 / 普朗克離散）：本體受傷 -1
+    if (!o.noHappy && hasStructure(pl) && n > 0) n = Math.max(0, n - 1);
     const absorbed = Math.min(pl.shield, n);
     pl.shield -= absorbed;
     pl.hp -= (n - absorbed);
@@ -150,7 +166,8 @@
     const d = DEFS[k];
     if (pl.ent < d.cost) return false;
     if (d.type === "unit" && pl.field.length >= FIELD_MAX) return false;
-    if (k === "jlms" && (pl.grave.length === 0 || pl.hand.length >= HAND_MAX)) return false;
+    // 重構類（JLMS 糾錯 / 大反彈）：棄牌堆要有牌且手牌未滿
+    if (d.fx === "reconstruct" && (pl.grave.length === 0 || pl.hand.length >= HAND_MAX)) return false;
     return true;
   }
 
@@ -163,33 +180,34 @@
     pl.hand.splice(handIdx, 1);
     pl.ent -= d.cost;
 
+    const enSide = side === "p" ? "e" : "p";
     if (d.type === "unit") {
       const u = { k, atk: d.atk, hp: d.hp, maxhp: d.hp,
                   taunt: !!d.taunt, immune: !!d.immune, structure: !!d.structure,
                   sick: true, can: false, fresh: true };
       pl.field.push(u);
-      // 空間：入場時若已有其他單位 → 糾纏增強 +1/+1（單位死亡時才進棄牌堆）
-      if (k === "space" && pl.field.length > 1) { u.atk++; u.hp++; u.maxhp++; }
+      // 縫合增益（空間 / 自旋網絡節點）：入場時若已有其他單位 → +1/+1
+      if (d.fx === "buffIfAllies" && pl.field.length > 1) { u.atk++; u.hp++; u.maxhp++; }
     } else {
-      switch (k) {
-        case "time":   // 模流推進：抽 2
+      switch (d.fx) {
+        case "draw2":       // 模流推進 / 和樂圈：抽 2
           draw(pl); draw(pl); break;
-        case "heat":   // 霍金輻射：敵全場 2 點熵衰減（拓撲免疫擋法術）
-          en.field.slice().forEach(u => dmgUnit(side === "p" ? "e" : "p", u, 2, { spell: true }));
-          dmgHero(side === "p" ? "e" : "p", 2);
+        case "aoe2":        // 霍金輻射 / 自旋泡沫：敵全場 2 點衰減（免疫擋法術）
+          en.field.slice().forEach(u => dmgUnit(enSide, u, 2, { spell: true }));
+          dmgHero(enSide, 2);
           break;
-        case "energy": // 指定目標 4 傷害
-          if (target && target.unit) dmgUnit(side === "p" ? "e" : "p", target.unit, 4, { spell: true });
-          else dmgHero(side === "p" ? "e" : "p", 4);
+        case "bolt4":       // 能量 / 哈密頓約束：指定目標 4 傷害
+          if (target && target.unit) dmgUnit(enSide, target.unit, 4, { spell: true });
+          else dmgHero(enSide, 4);
           break;
-        case "rt":     // 面積=糾纏：護盾 +2×單位數
+        case "shieldUnits": // 面積=糾纏 / 面積量子化：護盾 +2×單位數
           pl.shield += 2 * pl.field.length; break;
-        case "jlms": { // 糾錯重構：棄牌堆隨機回手
+        case "reconstruct": { // 糾錯重構 / 大反彈：棄牌堆隨機回手
           const gi = Math.floor(Math.random() * pl.grave.length);
           pl.hand.push(pl.grave.splice(gi, 1)[0]);
           break;
         }
-        case "cs":     // 手徵流：接下來 3 個己方回合開始對敵本體 2 傷害
+        case "dot":         // 手徵流 / Immirzi 參數：接下來 3 個己方回合開始對敵本體 2 傷害
           pl.cs += 3; break;
       }
       pl.grave.push(k);
@@ -206,7 +224,7 @@
     const g = gd();
     const el = stage.querySelector(".bt-ticker");
     if (!el) return;
-    const who = side === "p" ? (g.you || "你") : (g.enemy || "對手");
+    const who = side === "p" ? (g.you || "你") : (g.enemyName || g.enemy || "對手");
     // 有對應數學 modal 且非軟科普模式 → 給「展開數學細節」按鈕（沿用 details.js）
     const srcCard = document.querySelector('main .emerge[data-k="' + k + '"]');
     const canOpen = !!srcCard && srcCard.classList.contains("clickable") &&
@@ -304,7 +322,7 @@
       if (!k) break;
       const idx = e.hand.indexOf(k);
       let target = null;
-      if (k === "energy") target = aiEnergyTarget();
+      if (DEFS[k].needsTarget) target = aiBoltTarget();
       playCard("e", idx, target);
       render();
       await sleep(700);
@@ -355,23 +373,42 @@
     if (v.units.length) return { attacker: attackers[0], target: { unit: v.units[0] } };
     return null;
   }
+  // 反應式選牌：依玩家「場面威脅」而非卡名挑牌，holo / lqg 牌組共用同一套判斷
+  // —— 這就是 Rovelli「根據你的出牌出對應的牌」的來源：你鋪場他清場、你逼臉他立牆。
   function aiPick() {
-    const e = G.e;
-    const can = k => e.hand.includes(k) && canPlay(e, k);
-    if (can("mass") && !hasTaunt(e)) return "mass";
-    if (can("tqft")) return "tqft";
-    if (can("space")) return "space";
-    if (can("energy") && aiEnergyTarget()) return "energy";
-    if (can("heat") && G.p.field.length >= 2) return "heat";
-    if (can("happy")) return "happy";
-    if (can("cs")) return "cs";
-    if (can("rt") && e.field.length >= 2) return "rt";
-    if (can("time") && e.hand.length <= 3) return "time";
-    if (can("jlms")) return "jlms";
-    if (can("mass")) return "mass";
+    const e = G.e, p = G.p;
+    const can = k => canPlay(e, k);
+    const byFx = fx => e.hand.find(k => DEFS[k].fx === fx && can(k));
+    const byFlag = fl => e.hand.find(k => DEFS[k][fl] && can(k));
+    const anyUnit = () => e.hand.filter(k => DEFS[k].type === "unit" && can(k))
+                            .sort((a, b) => DEFS[b].cost - DEFS[a].cost)[0];  // 先打大的
+    const playerAtk = p.field.reduce((s, u) => s + u.atk, 0); // 玩家全場攻擊力（下回合都可動）
+    const lethalRisk = playerAtk >= e.hp + e.shield && !hasTaunt(e); // 玩家下回合可能斬殺
+
+    // 1) 反應「斬殺威脅」：先立嘲諷牆（體積量子）或補盾（面積量子化）擋下
+    if (lethalRisk) {
+      const tk = byFlag("taunt"); if (tk) return tk;
+      const sh = byFx("shieldUnits"); if (sh && e.field.length) return sh;
+    }
+    // 2) 反應「鋪場」：玩家場上 ≥2 單位 → 自旋泡沫 AoE 橫掃
+    if (p.field.length >= 2) { const aoe = byFx("aoe2"); if (aoe) return aoe; }
+    // 3) 反應「大單位」：攻≥4 或高血免疫 → 哈密頓約束定向移除
+    const bigThreat = p.field.some(u => u.atk >= 4 || (u.immune && u.hp >= 3));
+    if (bigThreat) { const bolt = byFx("bolt4"); if (bolt && aiBoltTarget().unit) return bolt; }
+    // 4) 鋪場發展：免疫單位 > 嘲諷牆 > 一般單位
+    const imm = byFlag("immune"); if (imm) return imm;
+    const tk2 = byFlag("taunt"); if (tk2) return tk2;
+    const u = anyUnit(); if (u) return u;
+    // 5) 節奏：持續傷害 > 場面領先時補盾 > 缺牌時補牌 > 重構
+    const dot = byFx("dot"); if (dot) return dot;
+    const sh2 = byFx("shieldUnits"); if (sh2 && e.field.length >= 2) return sh2;
+    const dr = byFx("draw2"); if (dr && e.hand.length <= 3) return dr;
+    const rc = byFx("reconstruct"); if (rc) return rc;
+    // 6) 無事可做 → bolt 打臉
+    const b = byFx("bolt4"); if (b) return b;
     return null;
   }
-  function aiEnergyTarget() {
+  function aiBoltTarget() {
     // 斬殺 > 解掉可解的最大威脅 > 打臉
     if (G.p.hp + G.p.shield <= 4) return { hero: true };
     const killable = G.p.field.filter(u => !u.immune && u.hp <= 4);
@@ -411,6 +448,21 @@
 
     stage.querySelector(".bt-exit").addEventListener("click", exitGame);
     stage.querySelector(".bt-end").addEventListener("click", endTurn);
+
+    // 抽鬼牌式「抬牌」：滑鼠或手指滑過手牌時，指到的那張比其他牌高一截。
+    // 用 pointermove + elementFromPoint 對滑鼠與觸控統一處理（手機可滑著看）。
+    const handEl = stage.querySelector(".bt-hand");
+    const liftAt = (x, y) => {
+      const hit = document.elementFromPoint(x, y);
+      const card = hit && hit.closest && hit.closest(".bt-card");
+      handEl.querySelectorAll(".bt-card.lift").forEach(c => { if (c !== card) c.classList.remove("lift"); });
+      if (card && handEl.contains(card)) card.classList.add("lift");
+    };
+    const clearLift = () => handEl.querySelectorAll(".bt-card.lift").forEach(c => c.classList.remove("lift"));
+    handEl.addEventListener("pointermove", e => liftAt(e.clientX, e.clientY));
+    handEl.addEventListener("pointerdown", e => liftAt(e.clientX, e.clientY));
+    handEl.addEventListener("pointerleave", clearLift);
+    handEl.addEventListener("pointercancel", clearLift);
     // 點空白處取消選取
     stage.addEventListener("click", e => {
       if (e.target === stage || e.target.classList.contains("bt-board")) cancelPending();
@@ -462,11 +514,12 @@
   function renderHero(side) {
     const g = gd(), pl = own(side);
     const el = stage.querySelector('.bt-hero[data-side="' + side + '"]');
-    const name = side === "p" ? (g.you || "你") : (g.enemy || "對手");
+    const name = side === "p" ? (g.you || "你") : (g.enemyName || g.enemy || "對手");
+    const sub = side === "p" ? (g.youFaction || "") : (g.enemyFaction || "");
     el.innerHTML =
-      '<div class="bh-portrait"><i data-lucide="' + (side === "p" ? "user-round" : "bot") + '"></i></div>' +
+      '<div class="bh-portrait"><i data-lucide="' + (side === "p" ? "user-round" : "orbit") + '"></i></div>' +
       '<div class="bh-info">' +
-        '<div class="bh-name">' + name + '</div>' +
+        '<div class="bh-name">' + name + (sub ? '<span class="bh-faction">' + sub + '</span>' : "") + '</div>' +
         '<div class="bh-stats">' +
           '<span class="bh-hp" title="' + (g.integrity || "") + '"><i data-lucide="heart-pulse"></i>' + pl.hp + '</span>' +
           (pl.shield > 0 ? '<span class="bh-shield"><i data-lucide="shield"></i>' + pl.shield + '</span>' : "") +

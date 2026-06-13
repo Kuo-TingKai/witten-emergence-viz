@@ -40,15 +40,17 @@ window.I18N["en"] = {
   // Concept-battle mode (read by game.js) — card names reuse card.<k>.title
   game: {
     you: "You", enemy: "Opponent",
+    youFaction: "Holographic entanglement · It from Qubit",
+    enemyName: "Carlo Rovelli", enemyFaction: "Loop Quantum Gravity · LQG",
     integrity: "Spacetime integrity",
     shield: "Entanglement shield",
     endTurn: "End turn",
     yourTurn: "Your turn",
-    enemyTurn: "Opponent’s turn",
+    enemyTurn: "Rovelli’s turn",
     win: "Spacetime rebuilt",
     lose: "Your spacetime dissolved",
-    winSub: "The opponent’s horizon lost its support — you re-stitched the entanglement network. Every card you played is a real physical mechanism.",
-    loseSub: "Entanglement severed, geometry scattered into sand. Try a different strategy and stitch it back.",
+    winSub: "You stitched back, with entanglement, the spacetime Rovelli tried to resolve into a spin network — two quantum-gravity programs collided at the table, and holography won this round. Every card you played is a real physical mechanism.",
+    loseSub: "Rovelli’s spin foam resolved your geometry back into a discrete lattice. Entanglement severed, spacetime scattered into sand — try a different strategy and stitch it back.",
     restart: "Play again",
     exitGame: "Leave battle",
     learnMore: "Expand the math →",
@@ -66,7 +68,18 @@ window.I18N["en"] = {
       jlms:   { text: "Reconstruct a random card from your discard pile back to your hand.", flavor: "Local damage is fine — an error-correcting code reconstructs from what remains (JLMS)." },
       tqft:   { text: "Topological immunity: unaffected by spells and entropy; can only be attacked by units.", flavor: "A topological operator is invariant under deformation — a logical qubit immune to local noise." },
       happy:  { text: "Structure: damage to your hero is reduced by 1.", flavor: "The HaPPY tensor network: fault tolerance is how the universe stores its save file." },
-      cs:     { text: "At the start of your next 3 turns, deal 2 damage to the enemy hero. Cannot be removed.", flavor: "A chiral current under topological protection: one-way flow that can’t be disrupted (Chern–Simons)." }
+      cs:     { text: "At the start of your next 3 turns, deal 2 damage to the enemy hero. Cannot be removed.", flavor: "A chiral current under topological protection: one-way flow that can’t be disrupted (Chern–Simons)." },
+      // ---- Carlo Rovelli’s Loop Quantum Gravity deck ----
+      lqg_holonomy:    { name: "Holonomy", text: "Draw 2 cards.", flavor: "Parallel-transport around a closed loop and what you read off is the loop variable — the namesake of Loop Quantum Gravity." },
+      lqg_node:        { name: "Spin-network node", text: "On play, if you already control a unit, gain +1/+1.", flavor: "The quantum of space: nodes carry volume, links carry area — the denser the network, the heavier the geometry." },
+      lqg_foam:        { name: "Spin foam", text: "Deal 2 damage to all enemy units and the enemy hero.", flavor: "A sum over all spacetime histories — spin foam is LQG’s path integral, sweeping the whole board in one stroke." },
+      lqg_hamiltonian: { name: "Hamiltonian constraint", text: "Deal 4 damage to any target.", flavor: "It forces geometry to evolve by the dynamics — the constraint equation slammed onto a single target." },
+      lqg_volume:      { name: "Volume quantum", text: "Taunt: enemies must attack it first.", flavor: "Volume eigenvalues are discrete; a quantized chunk of volume blocks the path — get past it first." },
+      lqg_area:        { name: "Area quantization", text: "Gain shield = 2 × the number of units you control.", flavor: "Area takes only discrete eigenvalues √(j(j+1)) — quantized area piles up into a geometric barrier." },
+      lqg_bounce:      { name: "Big Bounce", text: "Reconstruct a random card from your discard pile back to your hand.", flavor: "Loop quantum cosmology replaces the Big Bang singularity with a bounce — what got crushed comes back from the other side." },
+      lqg_diffeo:      { name: "Diffeomorphism invariance", text: "Topological immunity: unaffected by spells and decay; can only be attacked by units.", flavor: "Physics only sees gauge-equivalence classes — what’s invariant under any change of coordinates, a spell can’t touch." },
+      lqg_planck:      { name: "Planck discreteness", text: "Structure: damage to your hero is reduced by 1.", flavor: "There is a minimum length; spacetime is discrete at the Planck scale — damage can’t cut below the floor." },
+      lqg_immirzi:     { name: "Immirzi parameter γ", text: "At the start of your next 3 turns, deal 2 damage to the enemy hero. Cannot be removed.", flavor: "γ fixes the scale of the area gap — quanta of Planck area press in, one unit at a time." }
     }
   },
 

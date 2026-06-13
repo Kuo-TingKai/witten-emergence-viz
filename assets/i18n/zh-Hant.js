@@ -40,15 +40,17 @@ window.I18N["zh-Hant"] = {
   // 概念對戰模式（game.js 讀取）—— 卡名沿用 card.<k>.title
   game: {
     you: "你", enemy: "對手",
+    youFaction: "全像糾纏 · It from Qubit",
+    enemyName: "Carlo Rovelli", enemyFaction: "迴圈量子重力 · LQG",
     integrity: "時空完整度",
     shield: "糾纏護盾",
     endTurn: "結束回合",
     yourTurn: "你的回合",
-    enemyTurn: "對手回合",
+    enemyTurn: "Rovelli 的回合",
     win: "時空重建完成",
     lose: "你的時空解體了",
-    winSub: "對手的視界失去支撐——糾纏網絡由你重新縫合。每一張你打出的卡，都是一個真實的物理機制。",
-    loseSub: "糾纏斷光，幾何散成一盤沙。換個策略再縫一次。",
+    winSub: "你用糾纏縫回了 Rovelli 拆成自旋網絡的時空——兩套量子重力綱領在牌桌上對撞，這一局全像勝出。每一張你打出的卡，都是一個真實的物理機制。",
+    loseSub: "Rovelli 的自旋泡沫把你的幾何拆回離散的格子。糾纏斷光、時空散成一盤沙——換個策略再縫一次。",
     restart: "再來一局",
     exitGame: "離開對戰",
     learnMore: "展開數學細節 →",
@@ -66,7 +68,18 @@ window.I18N["zh-Hant"] = {
       jlms:   { text: "從你的棄牌堆隨機重構 1 張卡回到手牌。", flavor: "局部毀損不要緊——糾錯碼能從剩餘部分完整重構（JLMS）。" },
       tqft:   { text: "拓撲免疫：不受法術與熵傷害，只能被單位攻擊。", flavor: "拓撲算子怎麼拉扯都不變——邏輯位元對局部噪聲免疫。" },
       happy:  { text: "結構：你的本體受到的傷害 −1。", flavor: "HaPPY 張量網絡：容錯是宇宙內建的存檔方式。" },
-      cs:     { text: "接下來你的 3 個回合開始時，對敵方本體造成 2 點傷害。無法被移除。", flavor: "手徵流受拓撲保護：單向流動、不被打亂（Chern–Simons）。" }
+      cs:     { text: "接下來你的 3 個回合開始時，對敵方本體造成 2 點傷害。無法被移除。", flavor: "手徵流受拓撲保護：單向流動、不被打亂（Chern–Simons）。" },
+      // ---- Carlo Rovelli 的迴圈量子重力牌組 ----
+      lqg_holonomy:    { name: "和樂圈", text: "抽 2 張牌。", flavor: "沿一條閉合迴圈做平行移動，量到的就是迴圈變數——LQG 的命名由來。" },
+      lqg_node:        { name: "自旋網絡節點", text: "入場時若已有單位，獲得 +1/+1。", flavor: "空間的量子：節點承載體積、連線承載面積，網越密、幾何越重。" },
+      lqg_foam:        { name: "自旋泡沫", text: "對敵方所有單位與本體造成 2 點衰減。", flavor: "對所有時空歷史求和——自旋泡沫是 LQG 版本的路徑積分，一筆掃過全場。" },
+      lqg_hamiltonian: { name: "哈密頓約束", text: "對任一目標造成 4 點傷害。", flavor: "強制幾何依動力學演化——把約束方程砸到一個目標上。" },
+      lqg_volume:      { name: "體積量子", text: "嘲諷：敵方必須先攻擊它。", flavor: "體積的本徵值是離散的，一塊量子化體積堵在通路上，先過得了它再說。" },
+      lqg_area:        { name: "面積量子化", text: "獲得護盾＝2 × 你的場上單位數。", flavor: "面積只能取離散本徵值 √(j(j+1))——量子化的面積砌成一道幾何屏障。" },
+      lqg_bounce:      { name: "大反彈", text: "從你的棄牌堆隨機重構 1 張卡回到手牌。", flavor: "迴圈量子宇宙學用「大反彈」取代大霹靂奇點——被壓碎的，會從另一邊彈回來。" },
+      lqg_diffeo:      { name: "微分同胚不變", text: "拓撲免疫：不受法術與衰減傷害，只能被單位攻擊。", flavor: "物理只認規範等價類——座標怎麼換都不變的東西，法術抓不到。" },
+      lqg_planck:      { name: "普朗克離散", text: "結構：你的本體受到的傷害 −1。", flavor: "存在最小長度，時空在普朗克尺度是離散的——傷害打不穿這個底。" },
+      lqg_immirzi:     { name: "Immirzi 參數 γ", text: "接下來 3 個回合開始時，對敵方本體造成 2 點傷害。無法被移除。", flavor: "γ 定住了面積間隙的尺度——普朗克面積量子一份一份地持續施壓。" }
     }
   },
 

@@ -110,3 +110,32 @@ JLMS 糾錯 → 從棄牌堆重構、TQFT 拓撲 → 免疫法術…），出牌
   `game.js/.css`、`showcase`、`spirit`、本進度檔。
 - Fallback：本里程碑只動 `en.js`（資料）/ `game.css`（CSS 加法）/ README / 本檔，
   **未改任何遊戲邏輯**（`game.js` DEFS 與規則與 M3 相同）。
+
+## M5 — 對手 Carlo Rovelli + 迴圈量子重力專屬牌組 + 反應式 AI + 抽鬼牌抬牌
+
+把對戰從「鏡像對打」升級成**兩種量子重力綱領對撞**：玩家＝全像糾纏（It from Qubit），
+對手＝ Carlo Rovelli，操一套專屬的 **迴圈量子重力（LQG）** 牌組。
+
+- **引擎雙陣營化（faction-agnostic）**：`DEFS` 每張卡加 `faction`（holo/lqg）與 `fx`（效果原型）。
+  `playCard` 的法術分派從「依卡名 `switch(k)`」改為「依效果 `switch(d.fx)`」；單位入場增益、
+  重構可出條件、結構減傷（`hasHappy`→`hasStructure`）全部改吃旗標/`fx`。牌庫依 faction 抽牌
+  （`newDeck(faction)`、`G.p=holo / G.e=lqg`）。**player 牌組數值與機制完全不變**（只是換了分派路徑）。
+- **Rovelli 的 10 張 LQG 牌**（機制 1:1 對應玩家牌、物理意義換成 LQG，故平衡延續 M4 結果）：
+  和樂圈(draw2)、自旋網絡節點(buffIfAllies)、自旋泡沫(aoe2)、哈密頓約束(bolt4)、體積量子(taunt)、
+  面積量子化(shieldUnits)、大反彈(reconstruct)、微分同胚不變(immune)、普朗克離散(structure)、
+  Immirzi 參數 γ(dot)。卡名/說明/flavor 在 `game.cards.<k>`，zh + en 各補 10 張。
+- **反應式 AI（`aiPick` 重寫，faction 無關）**：改成依「玩家場面威脅」而非固定卡名挑牌——
+  面臨斬殺 → 立體積量子嘲諷牆 / 補面積護盾；玩家鋪場 ≥2 → 自旋泡沫 AoE；玩家有大單位 →
+  哈密頓約束定向點掉；否則鋪場（免疫>嘲諷>一般）→ 節奏牌。這就是「他會根據你的出牌出對應的牌」。
+- **抽鬼牌式抬牌**：`build()` 在 `.bt-hand` 掛 `pointermove`／`pointerdown`／`leave`／`cancel`，
+  用 `elementFromPoint` 找指到的 `.bt-card` 加 `.lift`（滑鼠與觸控統一，手機可滑著看）；
+  CSS `.bt-card.lift, .bt-card:hover` 站直、放大 1.16、上移 40px、`z-index:12`，連不能出的牌也抬起讓你看清。
+- **英靈名 / 副標**：敵方英雄改顯示「Carlo Rovelli」＋ 副標「迴圈量子重力 · LQG」、頭像換 `orbit` 圖標；
+  玩家副標「全像糾纏 · It from Qubit」。回合指示、ticker、結算文案改寫成兩綱領對撞。
+- **驗證**：jsdom 載入真實 `game.js` 跑 **500 局**（貪婪玩家 vs 新反應式 LQG AI）：
+  - **100% 分出勝負**（loop iters min 14 / median 41 / max 61）、**0 JS 錯誤、0 未結束**。
+  - 笨貪婪玩家勝率 27.4%（較 M4 的 31% 略降 → 反應式 AI 更強、更會解場），遊戲仍可贏。
+  - 單局取樣確認 Rovelli 場上實際打出 LQG 牌（lqg_planck ×2 / lqg_diffeo / lqg_node）→ 有來有回。
+  - i18n 鍵 zh/en **75/75 全對齊**；`game.css` 大括號平衡。
+- Fallback：仍只動 `game.js` + `game.css` + 兩個 i18n 檔 + README/本檔；移除這些增量即回到 M4
+  鏡像對打版本。LQG 牌組是純資料 + faction 標記，拔掉 `lqg_*` 卡與 `faction` 過濾即還原。
